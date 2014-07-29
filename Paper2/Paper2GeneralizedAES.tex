@@ -1,0 +1,515 @@
+\documentclass[11pt]{amsart}
+
+\title{Classifying Generalized AES Ciphers as Translation Based Ciphers} %preliminary title
+\author{L. Babinkostova $^{1\P}$, J. Keller $^{2*}$, B. Schreiner $^{3*}$, J. Schreiner-McGraw $^{4*}$, and K. Stubbs$^{5*}$ }
+\thanks{Supported by the National Science Foundation grant DMS-1062857}
+\thanks{$^{\P}$ Corresponding Author: liljanababinkostova@boisestate.edu}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Mathematical symbols   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages used%%%%%%%%%%%%%%
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\orb}{orbit}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsfonts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%      Standard symbols		   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{url}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{verbatim}
+\newcommand{\conc}{{\sf Conc}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Special Spaces                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\naturals}{{\mathbb N}}
+\newcommand{\integers}{{\mathbb Z}}
+\newcommand{\ZZ}{\mathbb{Z}}  
+\newcommand{\field}{{\mathbb F}}
+\newcommand{\subfield}{{\mathbb K}}
+\newcommand{\fieldext}{{\mathbb L}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\KK}{\mathcal{K}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\MM}{\mathcal{M}}
+\newcommand{\GG}{\mathcal{G}}
+\newcommand{\RR}{\mathcal{R}}
+\newcommand{\TT}{\mathcal{T}}
+\newcommand{\alt}{\mathcal{A}}
+\newcommand{\sym}{\mathcal{S}} 
+\newcommand{\BT}{\mathcal{BT}}
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\GF}{\mathrm{GF}}
+\newcommand{\Mlt}{\mathrm{Mlt}}
+\newcommand{\LMlt}{\mathrm{LMlt}}
+\newcommand{\PMlt}{\mathrm{PMlt}}
+\newcommand{\RMlt}{\mathrm{RMlt}}
+\newcommand{\Nuc}{\mathrm{Nuc}}
+\newcommand{\Ker}{\mathrm{ker}}
+\newcommand{\Btp}{\mathrm{Btp}}
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\CL}{\mathcal{L}^{(Q)}(\mathbb{F})}
+\newcommand{\GCL}{\mathcal{L}^{(Q)}(S)}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\CLQ}{\mathcal{L}^{(3)}(\mathbb{Q})}
+\newcommand{\ID}{\text{\bf{1}}}
+\newcommand{\iv}{^{-1}}
+\newcommand{\xx}{\bar{x}}
+\newcommand{\yy}{\bar{y}}
+\newcommand{\bgg}{\bar{g}}
+\newcommand{\LFSR}{\text{LFSR}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MATHEMATICAL UNITS 	           %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{definition}{{\bf Definition}}
+\newtheorem{theorem}{{\bf Theorem }}
+\newtheorem{lemma}[theorem]{{\bf Lemma }}
+\newtheorem{corollary}[theorem]{{\bf Corollary}}
+\newtheorem{proposition}[theorem]{{\bf Proposition}}
+\newtheorem{problem}{{\bf Problem }}
+\newtheorem{project}{{\bf Project }}
+\newtheorem{conjecture}{{\bf Conjecture}}
+\newtheorem{example}{{\bf Example}}
+\newcommand{\pf}{{\bf Proof:}}
+\newcommand{\epf}{\diamondsuit}
+
+\graphicspath{%
+    {converted_graphics/}
+    {/}
+}
+
+\subjclass[2010]{20B05 , 20B30, 94A60, 11T71, 14G50} %preliminary
+\keywords{Lane cipher, Finite fields, Symmetric groups, Group operation} 
+
+
+\begin{document}
+\maketitle
+\section{Introduction}
+
+\section{Preliminaries}
+
+\begin{definition}
+The mapping $T_s[k] : M_{m,n}(\GF(p^r)) \to M_{m,n}(\GF(p^r))$ given by $T_s[k] = \sigma[k_s] \circ \rho \circ \pi \circ \lambda \circ \sigma[k_{s-1}] \circ \rho \circ \pi \circ \lambda \circ \dots \circ \sigma[k_1] \circ \rho \circ \pi \circ \lambda$ where the $k_i = \phi(k,i)$ for some key mapping function $\phi$ is called the {\bf generalized, $s$-round, AES-like cipher}.
+\end{definition}
+
+
+
+
+
+\section{Classifying generalized AES ciphers as translation based ciphers}
+FIRST EXPLAIN THAT ALL WE NEED TO LOOK AT ARE PROPER MIXING AND SURJECTIVITY. Mention how to think of AES based cipher as Translation Based. REMEMBER TO ADD CONDITIONS TO MAKE SUBBYTES 0 = 0. THIS WILL SLIGHTLY CHANGE THE CONDITIONS OF OUR RESULTS.
+
+
+Results that prove this are:
+
+
+We now show that generalized SubBytes satisfies further requirements needed to apply the results of Caranti.
+
+\begin{lemma}
+Suppose $r > 4$. The bricklayer transformation $\gamma_h = \sigma_{-b} \circ \lambda$ is weakly $p$-uniform and strongly $1$-anti-invariant.
+\end{lemma}
+\begin{proof}
+As $\sigma_{-b}$ is affine it does not influence either of these properties. The first result follows from Lemma 36 part 2(a) of Generalized Rijndael paper. Note that $\gamma_h$ acts on $V_i$ and can be looked at as the projection of a piecewise Galois field inversion. To prove the second result, first note that Lemma 36 part 1 shows that $\gamma_h^2 = 1$. Consider some $U \subsetneq V$ such that $\gamma_h(U) = U$. Lemma 36 part 1(b) shows that $U$ has codimension 3. Therefore, Dim$(U) \leq r-3$ and $\gamma_h$ is 2-anti-invariant. By Lemma 4.5 in Old Caranti, $\gamma_h$ is strongly 1-anti-invariant.
+\end{proof}
+
+\begin{corollary}
+The bricklayer transformation $\gamma_h = \sigma_{-b} \circ \lambda^\ell$ is weakly $p$-uniform and strongly $1$-anti-invariant.
+\end{corollary}
+
+\begin{lemma}
+Let $r>4$. For all $v \neq $ in $V_i$ the set $\{\gamma_h(x + v) - \gamma_h(x)\}$ is not a coset of a subgroup of $V_i$.
+\end{lemma}
+\begin{proof}
+This follows as $\gamma_h$ is weakly $p-uniform$. (does that follow directly?)
+\end{proof}
+
+
+
+
+
+\subsection{Proper mixing layer}
+Analysis of the proper mixing layer in an AES based cipher depends on the composition of ShiftRows and MixColumns. We provide necessary and sufficient conditions on ShiftRows and MixColumns for an AES based cipher to have a proper mixing layer.  We further provide an algorithm that determines if MixColumns is a proper mixing matrix and classify a large family of proper mixing matrices.
+
+\begin{definition}
+A matrix $C \in M_{m,m}(GF(p^r))$ is a proper mixing matrix if it leaves no nontrivial, nonzero subspace $W = \oplus_{i \in I} V_i$ of $V = M_{m,1}(GF(p^r))=V_i \oplus \dots \oplus V_m$ where $I \subsetneq \{1,\dots,m\}$ invariant.
+\end{definition}
+
+\begin{definition}
+Fix a nontrivial, nonzero subspace $W = \oplus_{i \in I} V_i$ of $V = M_{m,1}(GF(p^r))=V_i \oplus \dots \oplus V_m$ where $I \subsetneq \{1,\dots,m\}$. Let $K = \{1,\dots,m\} \setminus I$. An invertible matrix $C \in M_{m,m}GF(p^r)$ is in \textbf{W-Form} if
+\begin{enumerate}
+\item For all $k \in K$, the $k$th row of $C$ has form $[c_1 c_2 \dots c_m]$ where $c_a = 0$ if $a \in I$.
+\item For all $k \in I$, the $k$th row of $C$ has form $[c_1 c_2 \dots c_m]$ where $c_b \neq 0$ for some $b \in I$.
+\end{enumerate}
+\end{definition}
+
+DO ILLISTRATIVE EXAMPLE HERE
+
+\begin{proposition}
+Fix a nontrivial, nonzero subspace $W = \oplus_{i \in I} V_i$ of $V = M_{m,1}(GF(p^r))=V_i \oplus \dots \oplus V_m$ where $I \subsetneq \{1,\dots,m\}$. Then there exists $C \in M_{m,m}(GF(p^r))$ such that $C$ leaves $W$ invariant.
+\end{proposition}
+\begin{proof}
+We can construct $C$ using the definition of W-Form.
+\end{proof}
+
+\begin{proposition}
+Fix a nontrivial, nonzero subspace $W = \oplus_{i \in I} V_i$ of $V = M_{m,1}(GF(p^r))=V_i \oplus \dots \oplus V_m$ where $I \subsetneq \{1,\dots,m\}$. Then invertible matrix $C$ leaves $W$ invariant iff and only if $C$ is in W-Form.
+\end{proposition}
+\begin{proof}
+First suppose that $C$ leaves $W$ invariant. Suppose by way of contradiction that $C$ is not in W-form. If $C$ fails the first condition of W-form, there is some $k \in K = \{1,\dots,m\} \setminus I$ such that the $k$th row of $C$ is of form $[c_1 c_2 \dots c_m]$ such that $c_a \neq 0$ for some $a \in I$. This implies, however, that $V_k$ must be in $W$, a contradiction, as multiplying some element of $W$ will result in a nonzero entry in the $k$th row. If $C$ fails the second condition of W-form, there is some $k \in I$ such that the $k$th row of $C$ has form $[c_1 c_2 \dots c_m]$ and $c_b = 0$ for all $b \in I$. This implies the contradiction that $V_k$ is not in $W$. \\
+
+Now, suppose that $C$ is in W-form. It is clear that for all $w \in W$, $Cw \in W$.
+\end{proof}
+
+We first present an algorithm that determines if $\rho$ properly mixes columns given diffusion matrix $C$.
+
+\begin{enumerate}
+    \item Given a matrix $C$, find the first row, denoted $r_i$ such that some entry $a_{ij}=0$.
+    \item Write $r_i^T$ complement as a column $b$, where $r_i^T$ complement is defined as $b_a=0$ when $r_{ia} \neq 0$ and $b_a = c$ for some arbitrary $c \in \GF(p^r)$ otherwise.
+    \item For each $b_a = 0$, consider the $a$th row of $C$, denoted $r_a$. For each $b_j \neq 0$, check that $a_{aj} = 0$. 
+    \item If there exists some $b_j \neq 0$ such that $a_{aj} \neq 0$, then $b$ is not left invariant under $C$-multiplication. Find the next entry $a_{i'j'}$ such that $i' \neq i$, and repeat steps 2 and 3. If no $b$ is left invariant under $C$-multiplication, then $C$ is a proper mixing matrix.
+\end{enumerate}
+
+
+
+
+
+
+
+We now provide some useful cases that guarantee that a matrix is a proper mixing matrix. The first result can be shown to be a corollary of the second, but we highlight it for its simplicity.
+
+\begin{proposition}
+Let $C$ have all nonzero entries. Then $C$ leaves no nontrivial, nonzero subspace $W = \oplus_{i \in I} V_i$ of $V = M_{m,1}(GF(p^r))=V_i \oplus \dots \oplus V_m$ where $I \subsetneq \{1,\dots,m\}$ invariant.
+\end{proposition}
+\begin{proof}
+Let $C$ have all nonzero entries and suppose by way of contradiction that it leaves $W$ invariant. Consider an arbitrary $V_j \not\in W$. Consider the $j$th row of $C$ of form $[r_j] = [c_1 c_2 \dots c_m]$ where each $c_i$ is nonzero. As $V_j \not\in W$, it must be the case that $[r_j]w = 0$ for all $w \in W$. This implies, though, that $W$ is $\{0\}$, a contradiction.
+\end{proof}
+
+Our more general result follows. I AM MAKING THIS BETTER RIGHT NOW
+
+\begin{proposition}
+A circulant matrix $C$ with first row $[0,\dots,0,a_{\alpha + 1}, 0, \dots, 0]$ (where $a$ is in the $\alpha + 1$ column) leaves no $W$ invariant if and only if gcd$(\alpha,m)=1$.
+\end{proposition}
+\begin{proof}
+Suppose first that gcd$(\alpha,m) = 1$ and consider by way of contradition some $W$ that is invariant. Suppose without loss of generality that $V_j \in W$. Then the structure of $C$ implies that every space $V_{l}$ with $l = j - k \alpha \text{ mod } m$ for some $k \in \mathbb{Z}_m$. As gcd$(\alpha,m)=1$, for all $i \in \mathbb{Z}_m$, there exists some $k \in \mathbb{Z}_m$ such that $j - k\alpha \equiv_m i$. Thus, $W = V_1 \oplus \dots \oplus V_m$. \\
+
+We prove the converse by contrapositive. Suppose that gcd$(\alpha,m) \neq 1$. Consider $V_j \in W$. Then the structure of $C$ implies that every space $V_{l}$ with $l = j - k \alpha \text{ mod } m$ for some $k \in \mathbb{Z}_m$. As gcd$(\alpha,m) \neq 1$, there is some $x \in \mathbb{Z}_m$ that cannot be acheived by $j - k\alpha$ for any $k \in \mathbb{Z}$. Let $X$ be the set of all such $x$. If we let $I = \{1,\dots,m\} \setminus X$, we see that $W = \oplus_{i \in I} V_i$ is left invariant by $C$. Thus, our converse holds.
+\end{proof}
+
+\begin{theorem}
+Let $C \in M_{m,m} GF(p^r)$ be a circulant matrix with first row $[0,\dots,0,a_{\alpha + 1},0 \dots, 0, b_{\beta+1}, 0, \dots, 0]$ (where $\alpha + 1$ and $\beta + 1$ are the columns of $a$ and $b$ respectively). Then $C$ is a proper mixing matrix if and only if gcd$(\beta, \frac{m}{|<\alpha>|}) = 1$ or gcd$(\alpha, \frac{m}{|<\beta>|}) = 1$ where we are considering the groups generating by $\alpha$ and $\beta$ in $\mathbb{Z}_m$.
+\end{theorem}
+\begin{proof}
+We first suppose without loss of generality that gcd$(\beta, \frac{m}{|<\alpha>|}) = 1$ and will show that $C$ is a proper mixing matrix. Suppose by way of contradiction that $W$ is left invariant and $V_j \in W$. The form of $C$ implies that $V_l$ with $l = j + x\alpha + y\beta \text{ mod m}$ is in $W$ for all $x,y \in \mathbb{Z}_m$. Consider now the factor group $\mathbb{Z}_m / <\alpha>$. The condition that gcd$(\beta, \frac{m}{|<\alpha>|}) = 1$ is equivalent to $\beta$ being a generator of $\mathbb{Z}_m / <\alpha>$. Thus, $\alpha$ and $\beta$ generate $\mathbb{Z}_m$. Consider any $i \in \mathbb{Z}_m$. As $\alpha$ and $\beta$ generate $\mathbb{Z}_m$, there exist $x,y \in \mathbb{Z_m}$ such that $i \equiv_m j + x\alpha + y\beta$. Thus $V_i \in W$ implying that $W = V_1 \oplus \dots \oplus V_m$. \\
+
+We prove the converse by contrapositive. Assume therefore that gcd$(\beta, \frac{m}{|<\alpha>|}) \neq 1$ and gcd$(\beta, \frac{m}{|<\beta>|}) \neq 1$. This implies that $\alpha$ and $\beta$ do not generate $\mathbb{Z}_m$. Let $I = <\alpha, \beta>$ and $W = \oplus_{i \in I} V_i$. As $a_{\alpha + 1}$ and $b_{\beta + 1}$ are the only nonzero terms of $C$, $W$ is left invariant by $C$.
+\end{proof}
+
+This result can easily be extended to allowing an arbitrary number of nonzero terms in each row.
+
+\begin{corollary}
+Let $C \in M_{m,m} GF(p^r)$ be a circulant matrix with first row $[c_1, c_2, \dots, c_m]$ such that the only nonzero terms are indexed $c_{i+1}$ for $i \in I = \{\alpha_1, \alpha_2, \dots, \alpha_k\}$. Then $C$ is a proper mixing matrix if and only if $<I> = \mathbb{Z}_m$.
+\end{corollary}
+This result completely characterizes which circulant matrices are proper mixing matrices.
+
+
+\begin{corollary}
+A circulant matrix $C \in M_{m,m} GF(p^r)$ with first row of form $[c_1 \dots c_k a b c_{k+2} \dots c_m]$ such that $a,b \neq 0$ is a proper mixing matrix.
+\end{corollary}
+\begin{proof}
+On Jeff's phone. Needs some formalization.
+\end{proof}
+
+QUESTION: ARE ALL PROPER MIXING MATRICES "CIRCULANT"
+
+\begin{theorem}
+The composition $\rho \circ \pi$ is a proper mixing layer if and only if $\rho$ properly mixes columns and for all $k \in (1,\dots,n-1)$, there exists some $c_i$ such that $j_a \cdot c_a + \dots + j_b \cdot c_b \equiv_n k$ for $j_i \in \naturals$.
+\end{theorem}
+\begin{proof}
+Suppose that for all $k \in (1,\dots,n-1)$, there exists some $c_i$ such that $j_a \cdot c_a + \dots + j_b \cdot c_b \equiv_n k$ for $j_i \in \naturals$. Consider some subspace $U$ of $V$ that is invariant under $\rho \circ \pi$. Assume without loss of generality that $V_1 \subset U$. Given properties of MixColumns, the first column of $M_{m,n}(\GF(p^r))$ must be contained in $U$ (this requires the diffusion matrix to have no zero entries). From here, properties of ShiftRows and MixColumns imply every column of $M_{m,n}(\GF(p^r))$ that can be reached by subsequent applications of ShiftRows must be contained in $U$. Our assumption guarantees that each column is reached. \
+
+Now, suppose that there exists some $k \in (1,\dots,n-1)$ such that for all combination of $c_i$, $j_a \cdot c_a + \dots + j_b \cdot c_b \not\equiv_n k$ for all $j \in \naturals$. Therefore, the we can create a space that is invariant and does not include the $k+1$ column.
+\end{proof}
+
+
+\begin{lemma}
+The composition $\rho^\ell \circ \pi^\ell$ is a proper mixing layer if and only if $\rho \circ \pi$ is a proper mixing layer.
+\end{lemma}
+
+
+
+
+
+
+
+
+
+
+\subsection{Non-surjective key schedule} \
+
+Minor Transitivity result:
+\begin{theorem}
+Consider some cipher $F[k]: V \to V$ where $V$ is the message space. Let $\KK$ be the key schedule of the cipher defined by $F[k] = \eta_1 \circ \dots \circ \eta_a \circ \sigma_k \circ \eta_{a+1} \circ \dots \circ \eta_b$ where each $\eta_i$ does not depend on $k$ and $\sigma_k$ applies the key $k$. Then $\{F[k]: k \in \KK\}$ is transitive if and only if $\KK$ is surjective.
+\end{theorem}
+
+\begin{proof}
+If $\KK$ is surjective then $\{F[k]: k \in \KK\}$ is transitive as $\{\sigma_k : k \in \KK\}$ is transitive. \
+
+Conversely, suppose that $\{F[k]: k \in \KK\}$ is transitive. Consider any $x$ and $y$ in $V$. There exist $x'$ such that $x = \eta_{a+1} \circ \dots \circ \eta_b(x')$ and $y'$ such that $y' = \eta_1 \circ \dots \circ \eta_a(y)$. Transitivity then implies that there exists some $k$ such that $\sigma_k(x) = y$. This implies that $\{\sigma_k : k \in \KK\}$ is transitive and thus $\KK$ is surjective.
+\end{proof}
+
+\begin{lemma}
+The group generated by one round function $\GG_T$ is not transitive if and only if there exist $x,y \in V$ such that $Orb(x) \cap Orb(y) = \emptyset$, where the orbit is defined over all of $\GG_T$.
+\end{lemma}
+
+We provide a loose bound on the orbits of the AddRoundKey function and the composition of the remaining round functions. (Need to check the numbers and stuff here)
+
+\begin{proposition}
+Let $T(V^*)$ be the set of round keys for one round and let $\rho'=\rho \circ \pi \circ \lambda$. Let $T$ be the order of the orbits of $T(V^*)$ acting on $V$ and let $R$ be the order of the orbits of $\rho'$ acting on $V$. If $T > \frac{|\MM|}{i}$ and $S > \frac{|\MM|}{j}$ such that $i + j \geq ij$, then $\GG_T$ is transitive.
+\end{proposition}
+
+
+
+
+The results provided in Caranti require surjectivity of the key schedule onto the message space in one round to show that the group generated by the proper mixing layer contains the set of translations $T(V)$. Surjectivity of the key schedule is not necessary, though.
+\begin{theorem}
+If there is some round $i$ such that the image of the key schedule contains a set of generators of $T(V)$ and the additive identity, then $T(V)$ is contained in the group generated by that round.
+\end{theorem}
+\begin{proof}
+We see that the group generated by one round is $<\sigma_{\phi(k,i)} \circ \rho'| k \in \KK>$. As $\sigma_0 \circ \rho'$ is in this group, $\rho'$ is in the group. Therefore, $<\sigma_{\phi(k,i)} : k \in \KK> \subset <\sigma_{\phi(k,i)} \circ \rho'| k \in \KK>$. As $<\sigma_{\phi(k,i)} : k \in \KK>$ generated $T(V)$ our result follows.
+\end{proof}
+\begin{definition}
+A cipher is \textbf{almost translation based} if it satisfies all requirements of a translation based cipher but replaces the need for a surjective key schedule in the proper round with the requirement that the image of the key schedule contains a set of generators of $T(V)$ and the additive identity.
+\end{definition}
+\begin{corollary}
+In all results in Caranti we can replace the requirement for translation based to almost translation based and the results still follow.
+\end{corollary}
+
+A BRIEF NOTE THAT A PROBABLITY APPROACH IS PROBABLY FUTILE.
+
+    The minimum number of unique keys needed to generate the message space $M_{m,n}(\GF(p^r))$ is $rmn$.
+
+\begin{theorem}
+There are
+    \[
+    \frac{[rmn]_p! (p - 1)^{rmn} p^{\binom{rmn}{2}}}{(rmn)!}
+    \]
+unique sets of keys of size $rmn$ which generate the space $M_{m,n}(\GF(p^r))$. Where
+    \[
+    [n]_p! := 1 \cdot (1 + p) \cdots (1 + p + \dots + p^{n-2}) \cdot (1 + p + \dots + p^{n-1}).
+    \]
+\end{theorem}
+
+
+
+\subsection{Linear Feedback Shift Registers and Stream Ciphers}
+
+We now analyze LFSR's for when they are surjective onto a set of generators of $T(V)$ and contain the additive identity.
+
+WE NEED TO THINK ABOUT HOW TO DEFINE ALL OF THIS STUFF \
+
+\begin{definition}
+KEY SCHEDULE VS KEY MAP (PROBABLY WANT THIS EARLIER). 
+Key Schedule: $KS: \KK \rightarrow \KK^s$. \\
+Key Mapping: $\phi (k,h): \KK \rightarrow \MM$.
+\end{definition}
+
+\begin{definition}
+An {\bf $a$-length LFSR} over $\GF(p^r)$ is a function $\GF(p^{ra}) \times \naturals_{0} \rightarrow \GF(p^{ra})$ given by $(k,i) \mapsto \alpha^i \cdot k$ for some $\alpha \in \GF(p^{ra})$.
+\end{definition}
+
+\begin{definition}
+An $a$-length LFSR defined by some $\alpha \in \GF(p^{ra})$ is called a {\bf maximal $a$-length LFSR} if $\alpha$ is a primitive root in $\GF(p^{ra})$.
+\end{definition}
+
+For the remainder of this section we will only consider maximal $a$-length LFSRs.
+
+\begin{definition}
+An {\bf $a$-length LFSR-based key mapping}, $\phi$, over $\MM=M_{m,n}(\GF(p^{r}))$ with $a | mn$ is defined as:
+\[
+\phi(k,i) = E \left(\LFSR(k,\frac{mn}{a}(i-1)), \dots ~,\LFSR(k, \frac{mn}{a}i - 1) \right),
+\]
+where $E$ is any bijection $E: (\GF(p^{ra}))^{\frac{mn}{a}} \leftrightarrow M_{m,n}(\GF(p^r))$.
+\end{definition}
+
+Any bijection $E: (\GF(p^{ra}))^{\frac{mn}{a}} \leftrightarrow M_{m,n}(\GF(p^r))$ is an isomorphism.
+
+\begin{lemma}
+Suppose $\alpha$ is a primitive root in $\GF(p^r)$, then for all $\beta, \gamma \in \GF(p^r)^*$, there exists a unique $j \in \ZZ_{p^r}$ such that $\gamma = \alpha^j \beta$.
+\end{lemma}
+\begin{proof}
+This follows from that fact that $\GF(p^r)^*$ is cyclic.
+\end{proof}
+
+\begin{lemma}
+Suppose $\phi$ is an $a$-length, maximal, LFSR-based key mapping. Fix some $\beta \in \GF(p^{ra})$ and some $i \in \{ 1,\dots,s \}$, then for any $\gamma \in \GF(p^{ra})$ there is some $j$ such that,
+\[
+E^{-1}(\phi(\gamma,i)) = \left[ \alpha^j \beta, ~ \alpha^{(j+1)} \beta, ~  \dots ~, ~ \alpha^{(j+ \frac{mn}{a})} \beta \right].
+\]
+\end{lemma}
+\begin{proof}
+By definition
+\[
+E^{-1}(\phi(\gamma,i)) = \left[ \gamma, ~ \alpha \gamma, ~  \dots ~, ~ \alpha^{\frac{mn}{a}} \gamma \right],
+\]
+but by the lemma from the previous slide, $\exists ! j \in \ZZ_{p^r}$ such that $\gamma = \alpha^j \beta$, so the result follows.
+\end{proof}
+
+
+\begin{lemma}
+For some fixed $\beta \in \GF(p^{ra})$ all additive combinations of elements from the set $\{ E^{-1}(\phi(\gamma,i)) : \gamma \in \GF(p^{ra}) \}$ can be written as:
+\[
+\left[ \beta \spadesuit,~ \alpha\beta \spadesuit, ~\dots~ ,~ \alpha^{\frac{mn}{a}}\beta \spadesuit \right]
+\]
+where $\spadesuit$ is the sum
+\[
+\spadesuit = \sum_{i=0}^{p^{ra} - 1} a_i \alpha^i, \text{ where } a_i \in \ZZ_p
+\]
+\end{lemma}
+\begin{proof}
+This follows from the previous Lemma.
+\end{proof}
+
+\begin{theorem} 
+Any maximal, $a$-length, LFSR-based key mapping with $a \neq mn$ is not surjective onto generators of $\MM$ in any round.
+\end{theorem}
+
+\begin{proof}
+Recall the form of every element generated by additive combinations of elements from the set $\{ E^{-1}(\phi(\gamma,i)) : \gamma \in \GF(p^{ra}) \}$
+\[
+\left[ \beta \spadesuit,~ \alpha\beta \spadesuit, ~\dots~ ,~ \alpha^{\frac{mn}{a}}\beta \spadesuit \right]
+\]
+Once we pick the first column $\beta$, the second column cannot be equal to the first column therefore $\exists m \in (\GF(p^{ra}))^{\frac{mn}{a}}$ such that no additive combination equals it. Since $E$ is an isomorphism, it follows no additive combination of elements from $M_{m,n}(\GF(p^r))$ equals $E(m)$.
+\end{proof}
+
+
+
+
+
+
+
+
+\begin{comment}
+%Some older stuff if we want it (I'm trying out the things from our slides of July 21).
+\begin{definition}
+We define the LSFR in the usual way (put actual definitnion) and always use a primitive root.
+\end{definition}
+\begin{lemma}
+If we choose $\beta$ as an initial value in the LSFR it will generate the outputs $\beta, \alpha \beta, \alpha^2 \beta, \dots, \alpha^{p^{r}-1}$ where $\alpha$ is the primitive root associated with the LSFR.
+\end{lemma}
+
+\begin{lemma}
+UPDATE WITH NEWER NOTATION Let $\phi(k,h)$ be our key schedule defined by an LSFR on some subspace of the message space. For all rounds $h$, $\phi(0,h) = 0$.
+\end{lemma}
+
+This lemma is true in all cases so we must check surjectivity onto generators.
+
+\begin{definition}
+Let the encoding function $E$ be any bijection between $[GF(p^{ra)]^{\fram{mn}{a}}$ and $M_{m,n}(GF(p^r))$. Note that this is possible as the spaces are isomorphic.
+\end{definition}
+
+\begin{lemma}
+Let $LSFR: GF(p^r) \to GF(p^r)$ have associated primitive root $\alpha$. Then, for all $\beta, \gamma \in GF(p^r)^*$, there exists some $k$ such that $\alpha^k \beta = \gamma$.
+\end{lemma}
+\begin{proof}
+This is true as $\alpha$ generates $GF(p^r)^*$.
+\end{proof}
+
+\begin{lemma}
+
+\end{lemma}
+
+\begin{lemma}
+Im$\phi(k,h)$ is the same for all rounds $h$.
+\end{lemma}
+\end{comment}
+
+
+
+IMPORTANT RESULTS!!
+
+
+Let $\rho' = \rho \circ \pi \circ \lambda$.
+
+
+\begin{lemma}
+The composition $(\rho')^n$ is not a translation for $n \not\equiv 0$ mod $|\rho'|$.
+\end{lemma}
+\begin{proof}
+Suppose by way of contradiction that $(\rho')^n = \sigma_k$ for some $k \in M_{m,n}(\GF(p^r))$. Then $\lambda \circ \sigma^{-1}_k \circ (\rho')^{n-1} = \pi^{-1} \circ \rho^{-1}$. Thus, $\lambda \circ \sigma^{-1}_k \circ (\rho')^{n-1}$ is linear. Then, for all $x,y$, 
+$$
+\lambda(\sigma^{-1}_k \circ (\rho')^{n-1}(x+y)) = \lambda(\sigma^{-1}_k \circ (\rho')^{n-1}(x)) + \lambda(\sigma^{-1}_k \circ (\rho')^{n-1}(y)).
+$$
+Let $A$ and $B$ be as defined in $\lambda$. Let $\sigma^{-1}_k \circ (\rho')^{n-1}(x) = X$, $\sigma^{-1}_k \circ (\rho')^{n-1}(y) = Y$ and $\sigma^{-1}_k \circ (\rho')^{n-1}(x+y) = C$. We see that
+
+\begin{align*}
+\lambda(C) &= \lambda(X) + \lambda(Y) \\
+AC^{-1} + B &= AX^{-1} + AY^{-1} + 2B \\
+C^{-1} &= X^{-1} + Y^{-1} + A^{-1}B \\
+C &= \frac{AXY}{AX + AY + BXY}.
+\end{align*}
+
+This implies that
+$$
+\lambda(\frac{AXY}{AX + AY + BXY}) = \lambda(X) + \lambda(Y)
+$$
+for all $X$ and $Y$ in $M_{m,n}(\GF(p^r))$ as there exist $x,y$ that are mapped to all $X$ and $Y$. Let $Y = 0$ and $X$ be nonzero. Then,
+$$
+\lambda(0) = \lambda(X) + \lambda(0).
+$$
+Thus, $\lambda(X) = 0$ for all nonzero $X$, a contradiction.
+\end{proof}
+
+\begin{definition}
+A reduced element of $\langle T[k] : k \in \KK \rangle$ containing $\rho'$ is an element of form $\sigma_{k_1} \circ (\rho')^{n_1} \circ \sigma_{k_2} \circ \dots \circ (\rho')^{n_i} \circ \sigma_{k_{i+1}}$ where no compositions can be collapsed into the identity.
+\end{definition}
+
+\begin{theorem}
+A reduced element containing $\rho'$ is never a translation.
+\end{theorem}
+\begin{proof}
+The proof follows as in the above lemma.
+\end{proof}
+
+\begin{theorem}
+Let $T_s[k]$ be a generalized AES based cipher with a proper mixing layer. Then $T_s[k]$ generates either $S_{|\MM|}$ or $A_{|\MM|}$ if and only if the key mapping function is surjective onto a set of generators and some key maps to the $0$ translation. (MAYBE: replace with almost translation based)
+\end{theorem}
+
+
+
+\end{document}
+
+
+
+
+
+
+\section{Introduction}
+
+\section{Preliminaries}
+
+\section{Classifying generalized AES ciphers as translation based ciphers}
+
+
+\section{Non-surjective key schedule}
+
+\section{Proper mixing layer}
+
+\section{Group Generated (big picture results)}
+
+
+%sagemathcloud={"zoom_width":100}

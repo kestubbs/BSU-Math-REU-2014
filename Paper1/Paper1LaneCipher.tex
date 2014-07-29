@@ -1,0 +1,970 @@
+\documentclass[11pt]{amsart}
+
+\title{Generalized Lane Hash Function} %preliminary title
+\author{L. Babinkostova $^{1\P}$, J. Keller $^{2*}$, B. Schreiner $^{3*}$, J. Schreiner-McGraw $^{4*}$, and K. Stubbs$^{5*}$ }
+\thanks{Supported by the National Science Foundation grant DMS-1359425}
+\thanks{$^{\P}$ Corresponding Author: liljanababinkostova@boisestate.edu}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Mathematical symbols   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages used%%%%%%%%%%%%%%
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\orb}{orbit}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsfonts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%      Standard symbols		   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{url}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{verbatim}
+\newcommand{\conc}{{\sf Conc}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Special Spaces                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\naturals}{{\mathbb N}}
+\newcommand{\integers}{{\mathbb Z}}
+\newcommand{\ZZ}{\mathbb{Z}}  
+\newcommand{\field}{{\mathbb F}}
+\newcommand{\subfield}{{\mathbb K}}
+\newcommand{\fieldext}{{\mathbb L}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\KK}{\mathcal{K}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\MM}{\mathcal{M}}
+\newcommand{\GG}{\mathcal{G}}
+\newcommand{\RR}{\mathcal{R}}
+\newcommand{\TT}{\mathcal{T}}
+\newcommand{\alt}{\mathcal{A}}
+\newcommand{\sym}{\mathcal{S}} 
+\newcommand{\BT}{\mathcal{BT}}
+\newcommand{\PP}{\mathcal{P}}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\GF}{\mathrm{GF}}
+\newcommand{\Mlt}{\mathrm{Mlt}}
+\newcommand{\LMlt}{\mathrm{LMlt}}
+\newcommand{\PMlt}{\mathrm{PMlt}}
+\newcommand{\RMlt}{\mathrm{RMlt}}
+\newcommand{\Nuc}{\mathrm{Nuc}}
+\newcommand{\Ker}{\mathrm{ker}}
+\newcommand{\Btp}{\mathrm{Btp}}
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\CL}{\mathcal{L}^{(Q)}(\mathbb{F})}
+\newcommand{\GCL}{\mathcal{L}^{(Q)}(S)}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\CLQ}{\mathcal{L}^{(3)}(\mathbb{Q})}
+\newcommand{\ID}{\text{\bf{1}}}
+\newcommand{\iv}{^{-1}}
+\newcommand{\xx}{\bar{x}}
+\newcommand{\yy}{\bar{y}}
+\newcommand{\bgg}{\bar{g}}
+\newcommand{\Sym}{\text{Sym}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MATHEMATICAL UNITS 	           %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{definition}{{\bf Definition}}
+\newtheorem{theorem}{{\bf Theorem }}
+\newtheorem{lemma}[theorem]{{\bf Lemma }}
+\newtheorem{corollary}[theorem]{{\bf Corollary}}
+\newtheorem{proposition}[theorem]{{\bf Proposition}}
+\newtheorem{problem}{{\bf Problem }}
+\newtheorem{project}{{\bf Project }}
+\newtheorem{conjecture}{{\bf Conjecture}}
+\newtheorem{example}{{\bf Example}}
+\newtheorem*{remark}{{\bf Remark}}
+\newcommand{\pf}{{\bf Proof:}}
+\newcommand{\epf}{\diamondsuit}
+
+\graphicspath{%
+    {converted_graphics/}
+    {/}
+}
+
+\subjclass[2010]{20B05 , 20B30, 94A60, 11T71, 14G50} %preliminary
+\keywords{Lane cipher, Finite fields, Symmetric groups, Group operation} 
+
+
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+In the pursuit of efficient and provably  secure constructions of cryptosystems  hash functions have emerged as important building blocks.  A hash function $H$ maps an input message $M$ of arbitrary length to a fixed-length hash value $h = H(M)$.  The following are the three main security requirements for cryptographic hash functions:
+
+\begin{itemize} 
+\item {{\emph{Collision resistance:}} It should be computationally infeasible to find two messages $M_1$ and $M_2$ with $M_1\neq M_2$, which result in the same hash value $H(M_1) = H(M_2)$.}
+\item {\emph {Preimage resistance:}} For a given hash value $h$, it should be computationally infeasible to find any message $M$, which results in the given hash value $H(M)=h$.
+\item{\emph {Second preimage resistance:}} For a given message $M_1$, it should be computationally infeasible to find a second message $M_2$ with $M_1\neq M_2$, which results in the same hash value $H(M_1)=H(M_2)$. 
+\end{itemize} 
+
+The general iterated hash structure proposed by Merkle in \cite{Merkle} is used in virtually all secure hash functions. It represents a guidance to build hash functions from compression functions. A block cipher can be considered as a compression function since it transforms two inputs (plain text and key) to an output (cipher text) whose length is smaller than the entire length of the two inputs. In \cite{Damgard}, I. Damgard showed that any compression function $F$ which is collision resistant can be extended to a collision resistant hash function $H(x)$. However, there are difficulties in designing a truly secure iterated hash function when the compression function is a block cipher (see, e.g., \cite{Black}, \cite {Preneel}, \cite {Preneel1} and \cite {Preneel2}).  Theoretical attacks against widely used cryptographic hash functions often get better over time. A motivation for investigating the group theoretic structure of  block ciphers used in a cryptographic hash function is to identify and exclude undesirable properties.  The security of a cryptographic hash function can be analyzed by considering possible attacks on the underlying block cipher applied in the compression scheme. 
+
+Knowing the order of group generated by the  cipher round functions  is an important algebraic question about the security of the cipher, because of its connection to the Markov cipher approach to differential cryptanalysis. In \cite {HSW} it was shown that if the one-round functions of an $s$-round iterated cipher generate the alternating or the symmetric group, then for all corresponding Markov ciphers the chains of  differences are {\it irreducible} and {\it aperiodic}. This means that after sufficiently many rounds of the cipher all differences become equally probable which ensures the cipher is secure against a differential cryptanalysis attack. Knowing the group structure may simplify the collision search in a hash function especially if there are algebraic weakness with respect to differential or linear cryptanalysis of the underlying cipher. Another undesirable property for a hash function is short cycles of the underlying cipher round transformations  when considered as permutations of the state space. 
+
+Many cryptographic hash functions including the LANE hash function \cite{SP} use the AES cipher (\cite {DR}, \cite {DRB}) as its compression function.  The AES cipher is an iterated cipher based on $\mathcal {SP}$-network. This means that a certain sequence of computations, constituting a {\it round}, is repeated a specified number of times. The computations in each round are defined as a composition of specific functions (substitutions and permutations) in a way that achieves Shannon's principle \cite {S} of confusion and diffusion. 
+
+In \cite{We}, R. Wernsdorf showed that the round functions of  AES over $\GF(2^8)$ generate the alternating group. In \cite {SW}, R. Sparr and R. Wernsdorf  provided conditions under which the group generated by the AES-like round functions which are based on operations on the finite field $\GF (2^k)$ is equal to the alternating group on the state space. Motivated by their work we embark on a formal study of the cipher used in the LANE  Hash function over the finite field $\GF (p^k)$ ($p\geq 2$). The permutation-based compression function in LANE consists of 6 parallel lanes and a linear message expansion. The permutations of each lane are based on the round transformations of the AES considered over the finite field $\GF (p^k)$ ($p\geq 2$). 
+
+%The underlying cipher in the LANE Hash function uses several of the AES round  functions in its structure.   
+
+
+The idea of examining block ciphers using different binary operations  in their  underlying structure has already been considered. For example, E. Biham and A. Shamir \cite{BS} examined the security of DES against their differential attack when some of the exclusive-or operations in DES are replaced with addition modulo $2^n$. In \cite {PRS} the authors initiated a study of Luby-Rackoff ciphers when the bitwise exclusive-or operation in the underlying Feistel network is replaced by a binary operation in an arbitrary finite group. They showed that in certain cases these ciphers are completely secure against adaptive chosen plaintext and ciphertext attacks and has better time and space complexity if considered over $\GF(p)$ for $p>2$. Although, the study of  the  Lane hash functions over $\mathcal {SP}$-network based ciphers over $\GF(2^r)$ has already been considered (see, e.g. \cite {We}) we are not aware of such study when the underlying operations are the field operations in  $\GF(p^r)$ for $p>2$. 
+
+The paper is organized as follows. In Section 2 we give some background from the theory of permutation groups and finite fields as well as block ciphers.  In Section 3 we introduce the generalized Lane ${\mathcal{SP}}$ network and provide conditions for the parity and the cycle structure of the round functions of such a network when considered as permutations on the state space. Furthermore, we show when the set of round functions in the generalized Lane $\mathcal{SP}$ network of $s$-rounds do not constitute a group under functional composition. In Section 4 we conclude the paper.
+
+
+ % In Section 4 we derive conditions for Rijndael-like round functions such that the group generated by these functions is equal to the alternating group or the symmetric group on the state space. 
+%to  determine the extent to which this and other results in \cite {We}  hold when we consider an arbitrary finite field.  In this paper we provide conditions under which the group generated by the Rijndael-like round functions which are based on operations on the finite field $\GF (p^k)$ ($p\geq 2$) is equal to the symmetric group or the alternating group on the state space. 
+
+%AES  has a highly algebraic structure. The cipher round transformations are based on operations of the finite field $\GF(2^8)$.  While little research has been done about the structural and algebraic properties of AES before it was adopted as a standard, there has been much research since. Several alternative representations of the AES have been proposed (see, e.g, \cite {BB}, \cite {CP} and \cite {LSWD}) and some group theoretic properties of the AES components have been discovered (see, e.g, \cite {CMRB}, \cite {MR}, \cite {SW} and \cite {We}).
+
+%One undesirable property for a hash function is short cycles of the underlaying cipher round transformations  when considered as permutations of the state space. Another undesirable property is non-trivial factor groups of the group generated by the round functions of the cipher. For example, in \cite {P} it was shown that if the group generated by the round functions of a block cipher is imprimitive then this might lead to the design of trapdoors.  Some related results about the cycle structure of the AES round functions are given in \cite {LSWD} and \cite{We}. 
+%Rijndael has a highly algebraic structure. The cipher round transformations are based on operations of the finite field $\GF(2^8)$.  While little research has been done about the structural and algebraic properties of Rijndael before it was adopted as a standard, there has been much research since. Several alternative representations of the AES have been proposed (see, e.g, \cite {BB}, \cite {CP} and \cite {LSWD}) and some group theoretic properties of the AES components have been discovered (see, e.g, \cite {CMRB}, \cite {MR}, \cite {SW} and \cite {We}).
+
+
+%Knowing the order of the group generated by the round functions is also an important algebraic question about the security of the cipher, because of its connection to the Markov cipher approach to differential cryptanalysis. In \cite {HSW} it was shown that if the one-round functions of an $s$-round iterated cipher generate the alternating or the symmetric group, then for all corresponding Markov ciphers the chains of  differences are {\it irreducible} and {\it aperiodic}. This means that after sufficiently many rounds of the cipher all differences become equally probable which makes the cipher secure against a differential cryptanalysis attack. In \cite{We}, R. Wernsdorf showed that the round functions of Rijndael over $\GF(2^8)$ generate the alternating group. In \cite {SW}, R. Sparr and R. Wernsdorf  provided conditions under which the group generated by the Rijndael-like round functions which are based on operations on the finite field $\GF (2^k)$ is equal to the alternating group on the state space. Motivated by their work we embark on a formal study of the Rijndael-like functions to  determine the extent to which this and other results in \cite {We}  hold when we consider an arbitrary finite field.  In this paper we provide conditions under which the group generated by the Rijndael-like round functions which are based on operations on the finite field $\GF (p^k)$ ($p\geq 2$) is equal to the symmetric group or the alternating group on the state space. 
+
+%Since the adoption of AES as a standard many papers have been published on the cryptanalysis on this cryptosystem. Initially AES survived several cryptanalytic efforts.  The situation started to change in 2009 when \cite {BK} and \cite {BKN} presented a key recovery attack on the full versions of AES-256 and AES-192.  Since then there have been several other theoretical attacks on these versions of AES and AES-128 (see, e.g. \cite{BKR}) as well as  on reduced-round instances of  these versions of AES  (see, e.g. \cite {DKS}).  However, in \cite {BDKS} the authors presented  a key recovery attack on version of AES-256  with up to 10 rounds that is of practical complexity. 
+
+
+
+%The crucial question is how far AES is from becoming practically insecure. One way of strengthening AES is through using sequential multiple encryption, as it has been done with DES (see,  \cite{Kaliski},  \cite{CW} and \cite {NIST1}).  If the set of Rijndael round functions is closed under functional composition, then multiple encryptions would be equivalent to a single encryption, and so strengthening AES through multiple encryptions would not be possible. Thus, it is important to know whether this set is closed under functional composition.  Also, it is important to know  how changing the underlying finite field in AES will impact this property.  In this paper we provide conditions under which the set of Rijndael-like functions considered as permutations of the state space and based on operations of the finite field $\GF (p^k)$ ($p\geq 2$) is not closed under functional composition.
+
+
+\section{Preliminaries}
+\subsection {Iterated block ciphers}
+A \emph{cryptosystem} is an ordered 4-tuple  $(\MM,\,\CC,\,\KK,\,T)$  where $\MM$, $\CC$, and $\KK$ are called the \emph {message}(\emph{state}) \emph {space}, the {\it ciphertext space}, and the {\it key space} respectively, and where $T: \MM\times\KK\rightarrow \CC$ is a transformation such that for each $k\in\KK$, the mapping $\epsilon_k:\MM\rightarrow\CC$, called an \emph{encryption transformation}, is invertible.
+For any cryptosystem $\Pi=(\MM,\,\CC,\,\KK,\,T)$,  let $\TT_{\Pi}=\{\epsilon_k:k\in\KK\}$ be the set of all encryption transformations. In addition, for any transformation $\epsilon_k\in\TT_{\Pi}$, let ${\epsilon_k}^{-1}$ denote the inverse of $\epsilon_k$.  In a cryptosystem where $\MM=\CC$ the mapping $\epsilon_k$ is a permutation of $\MM$. We consider only cryptosystems for which $\MM = \CC$. The set of all permutations of the set $\MM$ is denoted by $\sym_{\MM}$. Under the operation of functional composition $\sym_{\MM}$ forms a group called \emph{the symmetric group} over $\MM$. 
+The symbol $\GG=\langle\TT_{\Pi}\rangle$ denotes the subgroup of $\sym_{\MM}$ that is generated by the set $\TT_{\Pi}$. The group $\GG$ is known as the \emph {group generated by a cipher}. If $\TT_{\Pi} = \GG$, that is the set of permutations $\TT_{\Pi}$ forms a group, then we say the cipher is a group. As $\GG$ is finite by Theorem 3.3 from \cite{G} the cipher is a group if and only if its set of encryption transformations $\TT_{\Pi}$ is a closed under functional composition. For such a cipher, multiple encryption doesn't offer better security than single encryption.
+Computing the group $\GG$ generated by a cipher is often difficult. Let $T[k]$ denote the round function of the cipher under the key $k\in \KK$, where $\KK$ denotes the set of all round keys. Let $\tau= \{T[k]\vert k \in \mathcal{K}\}$ be the set of all round functions. The round functions $T[k]$ are also permutations of the message space $\MM$ and it is often easier to compute the group $\GG_{\tau}=\langle\{ T[k]\vert k\in \mathcal{K}\}\rangle$ generated by these permutations. Suppose we have an $s$-round cipher with a key schedule $KS: \KK\rightarrow{\KK^s}$ so that any key $k\in\KK$ produces a set of subkeys $k_i\in \KK$, $1\leq i\leq s$. It is natural then to consider the following three groups relevant to the block cipher:
+$$\GG_{\tau}=\langle T[k]\vert k\in\KK\rangle$$
+$$\GG_{\tau}^s=\langle T[k_s]T[k_{s-1}]\cdots T[k_1]\vert k_i\in\KK\rangle$$
+$$\GG=\langle T[k_s]T[k_{s-1}]\cdots T[k_1]\vert KS(k)=(k_1,k_2,\cdots,k_s)\rangle$$
+Thus $\GG_{\tau}$ is the group generated by the round functions and $\GG_{\tau}^s$ is the group generated by the set of all compositions of $s$ (independently chosen) round functions. The group $\GG$ is the group generated by the set of all compositions of $s$ round functions using the key schedule $KS$. This group can also be regarded as the group $\langle\TT_{\Pi}\rangle$ generated by the cipher $\TT_{\Pi}$. It is obvious that $\GG$ is a subgroup of $\GG_{\tau}^s$ which is a subgroup of $\GG_{\tau}$. We will show that $\GG_{\tau}^s$ is in fact a normal subgroup of $\GG_{\tau}$. 
+
+
+
+
+\subsection {Group theoretical background}
+
+In this section we present some background from the theory of permutation groups and finite fields which are used in this paper.
+\subsubsection{\bf Permutation groups} 
+
+For a finite set $X$, let $\vert X\vert$ denote the number of elements of $X$. For any nonempty finite set $X$ with $\vert X\vert=n$, the set of all bijective mappings of $X$ to itself is denoted by $\sym_n$ and is called the \emph{symmetric group} on $X$. A permutation $g\in \sym_n$ is a \emph {transposition} if $g$ interchanges two elements $x,y\in X$ and fixes all the other elements of $X\setminus \{x,y\}$. A permutation $g\in \sym_n$ is called an \emph {odd} (\emph{even})  permutation if $g$ can be represented as a composition of an odd (even) number of transpositions\footnote{Note that in this terminology a cycle of even length is an odd permutation, while a cycle of odd length is an even permutation.}.
+
+The set of all even permutations is a group under functional composition and is called the \emph{alternating group} on $X$. The symbol $\alt_n$ denotes the alternating group on a set $X$ with $\vert X\vert=n$. The \emph{degree} of a permutation group $G$ over a finite set $X$ is the number of elements in $X$ that are moved by at least one permutation $g\in G$.
+\begin{theorem} \label{simple}  
+For $n\geq 5$, the alternating group $\alt_n$ is a simple group.
+\end{theorem}
+
+For any subgroup $G\leq\sym_n$, for any $x\in X$, the set $orb_G(x)=\{\phi(x):\phi\in G\}$ is called the \emph{orbit} of $x$ under $G$. The set $stab_G(x)=\{\phi\in G:\phi (x)=x\}$ is called the \emph{stabilizer} of $x$ in $G$. We will make use of the following well-known theorem, often called the Orbit-Stabilizer Theorem.
+
+\begin{theorem}
+Let $G$ be a finite group of permutations of a set $X$. Then for any $x\in X$, 
+\[
+\vert G\vert=\vert orb_G(x)\vert\cdot\vert stab_G(x)\vert
+\]
+\end{theorem}
+Let $l, n$ denote natural numbers such that $0<l\leq n$. A group $G\leq \sym_n$ is called \emph {$l$-transitive} if, for any pair $(a_1,a_2,\ldots,a_l)$ and $(b_1,b_2,\ldots,b_l)$ with $a_i\neq a_j$, $b_i\neq b_j$ for $i\neq j$, there is a permutation $g\in G$ with $g(a_i)=b_i$ for all $i\in \{1,2,\ldots,l\}$. A $1$-transitive permutation group is called \emph {transitive}. 
+
+A subset $B\subseteq X$ is called a \emph {block} of $G$ if for each $g\in G$ either $g(B)=B$ or $g(B)\cap B =\emptyset$. 
+A block $B$ is said to be \emph {trivial} if $B\in\{\emptyset,X\}$ or $B=\{x\}$ where $x\in X$. The group $G\leq \sym_n$ is called \emph{imprimitive} if there is a non-trivial block $B\subseteq X$ of $G$; otherwise $G$ is called \emph{primitive}. 
+ 
+
+
+\subsubsection{\bf Finite fields}
+A structure $(\mathbb {F},+,\cdot)$ is a \emph {field} if and only if both $(\mathbb {F},+)$ is an Abelian group with identity element $0_G$ and $({\mathbb F}\setminus\{0_G\},\cdot)$ is an Abelian group and the distributive law of $\cdot$ over $+$ applies. If the number of elements in $\mathbb F$ is finite, $\mathbb F$ is called a \emph {finite field}; otherwise it is called an \emph {infinite field}.
+\begin{definition}
+Suppose $\mathbb{F}$ and $\mathbb K $ are fields. If  $\mathbb{F}\subseteq \mathbb K$, then $\mathbb{F}$ is called a {\emph subfield} of $\mathbb K$, or equivalently $\mathbb{K}$ is called an {\emph extension field} of $\mathbb{F}$.
+\end{definition}
+The theorems below are taken from \cite{G}.
+
+\begin{theorem}\label{FM1}$($\cite{G}, $\text{\textnormal{Theorem }} 22.3)$
+For each divisor $m$ of $n$, $\GF(p^n)$ has a unique subfield of order $p^m$. Moreover, these are the only subfields of $GF(p^n)$.
+\end{theorem}
+
+Let $q$ be a power of a prime number. The theorem above implies that for any subfield $F$ of $\GF(q^m)$ such that $GF(q) \subseteq F$ there is a divisor $d$ of $m$ such that $F = GF(q^d)$. Also, for each divisor $d$ of $m$ there is a subfield $F$ of $GF(q^m)$ such that $GF(q) \subseteq F$ and $\vert F\vert=q^d$.
+
+
+%\begin{definition}
+%A polynomial $p(x)$ is \emph {irreducible} over $\GF(q)$ if it is non-constant and not a product of polynomials of lower degree.
+%\end{definition}
+
+\begin{definition}
+A field $F$ is called \emph{perfect} if $F$ has characteristic $0$ or if $F$ has characteristic $p$ and $F^p = \lbrace a^p | a\in F\rbrace = F$.
+\end{definition}
+
+\begin{theorem}\label{FM2}$($\cite{G}$, \textnormal{Theorem } 20.8)$
+If $f(x)$ is an irreducible polynomial over a perfect field $F$, then $f(x)$ has no multiple roots.
+\end{theorem}
+
+\begin{theorem} $($\cite{G}$, \textnormal{Theorem } 20.7)$
+Every finite field is perfect.
+\end{theorem}
+
+This means that an irreducible polynomial over a finite field has no repeated roots.
+
+\begin{theorem}$($\cite{G}$, \textnormal{Theorem }21.2)$
+Let $E$ be an extension field of the field $F$ and let $a\in E$. If $a$ is transcendental over $F$, then $F(a)\sim F(x)$. If $a$ is algebraic over $F$, then $F(a)\approx F[x]/\langle p(x)\rangle$, where $p(x)$ is a polynomial in $F[x]$ of minimum degree such that $p(a)=0$. Moreover, $p(x)$ is irreducible over $F$.
+\end{theorem}
+
+%\begin{definition}
+%A field $E$ is an extension field of a field $F$ if $F\subseteq E$ and the operations of $F$ are those of $E$ restricted to $F$.
+%\end{definition}
+
+\begin{definition}
+Let $E$ be an extension field of field $F$ and let $a \in E$. We call $a$ \emph {algebraic over} $R$ if $a$ is the zero of some nonzero polynomial in $F[x]$. If $a$ is not algebraic over $R$, it is called transcendental over $F$.
+\end{definition}
+
+
+\begin{theorem}$($\cite{G}$, \textnormal{Theorem }21.2)$\\
+If $a$ is algebraic over $F$, then there is a unique monic irreducible polynomial $p(x)$ in $F[x]$ such that $p(a)=0$.
+\end{theorem}
+
+This means that if $a\in GF(q^m)$, but $a \notin \GF(q)$, then there is a unique monic irreducible polynomial $p(x) \in F_{q}[x]$ such that $p(a) = 0$. Since every monic irreducible polynomial $p(x)\in \GF(q)[x]$ of degree $\leqslant m$ has a root in $GF(q^m)$ there is a mapping from the set of elements of $GF(q^m)$ to the set of monic irreducible polynomials of degree $m$ over $GF(q)$ that are not in any field $F$ with $GF(q) \subseteq F \subset GF(q^m)$. 
+
+By Theorem \ref{FM1}, the subfields $F$ of $GF(q^m)$ such that $GF(q) \subseteq F \subset GF(q^m)$ are of the form $GF(q^d)$ where $d |m$. Note that two subfields of $GF(q^m)$ need not to be subfields of each other. If $\gcd(d_1, d_2) = 1$ and $d_1,d_2 |m$ then $GF(q^{d_1}) \subseteq GF(q^m)$ and $GF(q^{d_2}) \subseteq GF(q^m)$, but $GF(q^{d_1})$ and $\GF(q^{d_2})$ are not subfields of each other. Every subfield of $GF(q^m)$ is of the form $GF(q^d)$ where $d\vert m$. So, the number of elements in $GF(q^m)$ that are not in any proper subfield of $GF(q^m)$ is $ \sum_{d|m} \mu (d) q^{\frac{m}{d}}$ where $\mu$ is the  M\"obius function.
+
+%%%%%%%%%%%%%%
+%Explain the \mu function %
+%%%%%%%%%%%%%%
+
+\begin{definition}
+Let $A$ be an algebraic closure of $GF(q)$. The mapping $f(x): A \rightarrow A$ defined by $F(a) = a^q$ is called the \emph {Frobenius mapping}.
+\end{definition}
+
+%\begin{tikzpicture}
+%    \begin{scope}[shift={(3cm,-5cm)}, fill opacity=1]
+    %    \draw(0,0) ellipse(3cm and 2cm);
+  %      \draw[fill=none, draw = black] (-1,0) ellipse (1cm and 0.5cm);
+  %  \draw[fill=none, draw = black] (1,0) ellipse (1.4cm and 0.8cm);
+  %  \node at (1,1.3) (A) {$GF(q^m)$};
+ %   \node at (-1.2,0) (B) {$GF(q^{d_1})$};
+  %  \node at (1.4,0) (C) {$GF(q^{d_2})$};
+ %   \end{scope}
+
+%\end{tikzpicture}
+
+
+Any finite field $\mathbb K$ can be also viewed as a vector space over $\mathbb{F}$ if we define the scalar multiplication as follows
+\[
+\mathbb{F}\times \mathbb {K} \rightarrow \mathbb {K}
+\]
+\[
+(a,\alpha)\mapsto a\alpha
+\]
+Suppose the extension field ${\mathbb K}$ of ${\mathbb F}$ is a finite dimensional vector space over ${\mathbb F}$. Let $d=dim_{\mathbb F}(\mathbb K)$ be the dimension of the vector space ${\mathbb K}$ over the field ${\mathbb F}$, and let $\{\alpha_1, \alpha_2,\cdots,\alpha_d\}$ be a basis of the vector space $\mathbb K$ over $\mathbb F$. Then any element $\beta\in \mathbb K$ can be expressed uniquely as a linear combination of $\alpha_1, \alpha_2,\cdots,\alpha_d$ with coefficients in $\mathbb F$
+
+\[
+\beta=a_1\alpha_1+a_2\alpha_2+\cdots+a_d\alpha_d
+\]
+where $a_1,a_2,\cdots, a_d\in \mathbb F$.
+
+In field theory the dimension $d$ of the vector space $\mathbb K$ over $\mathbb F$ is called the \emph{degree} of extension.
+
+It is known that every finite field has order $p^n$ for some prime number $p$ and some positive integer $n$. Such a field is called  a \emph {Galois field} of order $p^n$ and is denoted by $\GF(p^n)$. The following classical fact from the theory of finite fields (see \cite {G}) will be used.
+\begin{theorem}\label{fieldorderthm}
+$\GF(p^{n_1})\subseteq \GF(p^{n_2})$ if and only if $n_1$ divides $n_2$.
+\end{theorem}
+It is also known that a finite field ${\mathbb K}$ of order $p^{nd}$ can be constructed as a quotient ring $\frac{{\mathbb F}[x]}{\langle f(x)\rangle}$ where ${\mathbb F}[x]$ is the polynomial ring over the field ${\mathbb F}$ of order $p^n$ and $f(x)\in {\mathbb F}[x]$ is an irreducible polynomial of degree $d$ over ${\mathbb F}$. The field ${\mathbb K}$ is an extension field of degree $d$ of ${\mathbb F}$ i.e., a vector space of dimension $d$ over ${\mathbb F}$. The equivalence classes modulo $f(x)$ in $\frac{{\mathbb F}[x]}{\langle f(x)\rangle}$ of the polynomials $1,x,x^2,\cdots, x^{d-1}$ over ${\mathbb F}$ form a basis of ${\mathbb K}$ viewed as a vector space over the field ${\mathbb F}$.  Thus, using $x^i$ as representative for the equivalence class of $x^i$ modulo $f(x)$ (for $0\le i\le d-1$), the elements in $\mathbb K$ can be represented uniquely as 
+\[
+a_{d-1}x^{d-1}+ a_{d-2}x^{d-2}+\cdots+a_{2}x^{2}+ax+a_0 
+\]
+where $a_i\in {\mathbb F}$.
+\begin{definition}
+A \emph{quadratic field extension} of a field ${\mathbb K}$ is a field extension of degree $2$.
+\end{definition}
+In the case where a quadratic extension ${\mathbb K}$ arises as the quotient ring $\frac{{\mathbb F}[x]}{\langle f(x)\rangle}$ for an irreducible polynomial $f(x)$ of the form $x^2-c$ with $c$ in ${\mathbb F}$, it is common to replace the equivalence class of $x$ modulo $f(x)$ with the symbol $\sqrt{c}$ when representing the elements of ${\mathbb K}$ as linear combinations of basis elements of the vector space ${\mathbb K}$ over the field ${\mathbb F}$. In this notation, elements of ${\mathbb K}$ are written as $a_0+a_1\sqrt{c}$, where $a_0,a_1 \in \mathbb F$ and ${\mathbb K}$ is usually denoted by $\mathbb F(\sqrt{c})$.
+
+We consider the following function on finite fields.
+\begin{definition}
+Let $\field$ be a finite field of order $q$ and $\mathbb K$ be an extension field of $\field$ of degree $d$. The \emph{trace} function on $\mathbb K$ with respect to $\field$ is the function $Tr:\mathbb K\rightarrow \mathbb F$ defined by  
+\[ 
+\textup{Tr}(a) = a + a^q + a^{q^2} + \cdots + a^{q^{d-1}}.
+\]
+\end{definition}
+For any subset $S$ of a field $E$ write $S^{-1}$ for the set $\{s^{-1}\vert 0\neq s\in S\}$. The set $S$ is called  an \emph{inverse-closed} if $S^{-1}\subseteq S$. The inversion map in finite fields is of cryptographic interest, especially when we study the algebraic structure of the ciphers which are based on substitution-permutation networks. 
+The following theorem is a result by S. Mattarei  in \cite{Mattarei}.
+\begin{theorem} \label{mattareithm}
+Let $A$ be a non-trivial inverse-closed additive subgroup of the finite field $E=\GF(p^n)$. Then either $A$ is a subfield of $E$ or else $A$ is the set of elements of trace zero in some quadratic field extension contained in $E$.
+\end{theorem}
+
+\begin{lemma}\label{qfelemma}
+The number of elements of trace zero in a quadratic field extension $\mathbb K(\sqrt{c})$ of a subfield $\mathbb K \subseteq \GF(p^n)$ is equal to $\vert \mathbb {K} \vert$.
+\end{lemma}
+
+\begin{proof}
+The set of elements of trace zero in $\mathbb K(\sqrt{c})$ is the set 
+\[
+\{a_0+a_1\sqrt{c} \; \vert \; a_0,a_1 \in \mathbb K, a_0=0 \}
+\]
+This set has $\vert {\mathbb K} \vert$ members. 
+\end{proof}
+\begin{theorem}\label{invclosedaddsubgpthm}
+Any non-trivial inverse-closed additive subgroup $H$ of a finite field $\GF(p^n)$ has $p^k$ elements for some $k \vert n$.
+\end{theorem}
+\begin{proof}
+By Theorem \ref{mattareithm}, there are two possibilities: $H$ is a subfield of $\GF(p^n)$, in which case the result follows immediately from Theorem \ref{fieldorderthm}; or $H$ is the set of elements of trace zero in a quadratic field extension $\mathbb K(\sqrt{c})$ of a subfield $\mathbb K \subseteq \GF(p^r)$.  In the latter case, by Theorem \ref{fieldorderthm} we have that $\vert \mathbb K \vert = p^k$ for some $k \vert n$, and Lemma \ref{qfelemma} yields $\vert H \vert = \vert \mathbb K \vert = p^k$.
+\end{proof}
+
+
+
+
+\section{Cycle structure of the generalized Lane-cipher round functions}
+In this section we show properties of the cycle structure of the round functions of a Lane-like $\mathcal SP$-network considered over the field $\GF(p^r)$, which we call \emph {generalized  Lane-like functions}. The notation of the generalized Lane-like functions  and their component functions will be similar to the notation in \cite {SW}. One exception will be that the underlying field in the generalized Lane-like functions and their component functions is the finite field  $\GF(p^r)$ of characteristic $p\geq 2$ instead of $\GF(2^r)$.
+
+Let $m,\,n,\,r $ be positive integers. The symbol $M_{m,n}(\GF(p^r))$ denotes the set of all $m\times n$-matrices over $\GF(p^r)$. The elements of $\GF(p^r)^{mn}$ are defined as matrices $b\in M_{m,n}(\GF(p^r))$ with the mapping $t:\GF(p^r)^{mn}\rightarrow M_{m,n}(\GF(p^r))$, where :
+\[
+t : [a_1~ \dots~ a_{mn}] \mapsto 
+\left[
+\begin{array}{ccccc}
+a_1 & a_2 & \dots & a_{n} \\
+a_{n+1} & a_{n+2} & \dots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{(m-1)n} & a_{(m-1)n + 1} & \dots & a_{mn} \\
+\end{array}
+\right ].
+\]
+We start by extending previous analysis of the cycle structure of the component functions in the generalized Rijndael-like function to their implementation in Lane.
+
+We will use the notation $M^{\ell}_{m,n}(\GF(p^r))$ to denote
+$$[M_{m,n}(\GF(p^r)) ~ \dots ~ M_{m,n}(\GF(p^r))]$$
+where there are $\ell$ copies of $M_{m,n}(\GF(p^r))$. Note that, as defined in AES, the domains of SubBytes, ShiftRows and MixColumns are $M_{m,n}(\GF(p^r))$. Therefore, we must generalize these functions to operate on $\ell$ matrices in parallel.
+\vspace{0.2in}
+
+
+
+\subsection{{\bf Analysis of the SubBytes-like function } ($\lambda$-function)}
+
+\begin{definition} 
+Let $\lambda: M_{m,n}(\GF(p^r))\rightarrow M_{m,n}(\GF(p^r))$ denote the mapping defined as a parallel application of $m \cdot n$ bijective S-box-mappings $\lambda_{ij} : \GF(p^r) \rightarrow \GF(p^r)$ defined by $\lambda(a) = b$ if and only if $b_{ij}=\lambda_{ij}(a_{ij})$.
+\end{definition}
+Each S-box mapping consists of an inversion, multiplication by a fixed  $A\in \GF(p^r)$, and addition of a fixed element $B\in\GF(p^r)$ i.e. it is a mapping of the form $Ax^{-1}+B$ where $A,B\in \GF(p^r)$ are fixed. For convenience we define this map on all of $\GF(p^r)$ so that it maps $0$ to $B$, and any nonzero $x$ to $Ax^{-1}+B$.
+\begin{lemma}\label{SBlemma}
+Let $A\in \GF(p^r)$ be the fixed element used in the S-box mapping $\lambda_{ij}$.  If $p=2$ then the function $\lambda$ is an odd permutation if and only if $r\geq 2$ and $m\cdot n=1$. If  $p>2$ then the function $\lambda$ is an odd permutation if and only if $m$ and $n$ are odd, and either
+\begin{enumerate}
+\item $p \equiv_{4} 3$, $r$ is odd, and $(p^r-1)/\left\vert\left\langle A \right\rangle\right\vert$ is odd, or 
+\item Either $p \equiv_{4} 1$ or $r$ is even, and $(p^r-1)/\left\vert\left\langle A \right\rangle\right\vert$ is even.
+\end{enumerate}
+\end{lemma}
+
+\begin{definition}
+Let $\lambda^\ell : M^{\ell}_{m,n}(\GF(p^r)) \to M^{\ell}_{m,n}(\GF(p^r))$ be defined as \\
+$\lambda^\ell([A_1 \dots A_\ell]) = [\lambda(A_1) \dots \lambda(A_\ell)]$ where each $A_k \in M_{m,n}(\GF(p^r))$.
+\end{definition}
+
+\begin{lemma}
+The permutation $\lambda^\ell$ is odd if and only if $\lambda$ is odd and $\ell$ is odd.
+\end{lemma}
+\begin{proof}
+As $\lambda$ acts upon each element of the matrix $M_{m,n}(\GF(p^r))$ in the same way, it is clear that $\lambda^\ell : M^{\ell}_{m,n}(\GF(p^r)) \to M^{\ell}_{m,n}(\GF(p^r))$ is equivalent to $\lambda^* : M_{m,\ell n}(\GF(p^r)) \to M_{m,\ell n}(\GF(p^r))$. Our result follows from the previous lemma.
+\end{proof}
+
+
+
+
+
+
+
+\subsection{{\bf Analysis of the ShiftRows-like function} ($\pi$-function)}
+\begin{definition} 
+Let $\pi: M_{m,n}(\GF(p^r))\rightarrow M_{m,n}(\GF(p^r))$ denote the mapping for which there is a mapping $c: \{0,\ldots, m-1\}\rightarrow \{0,\ldots, n-1\}$ such that $\pi(a)=b$ if and only if $b_{ij}=a_{i(j-c(i))\;mod\;n}$ for all $0\leq i <m$, $0\leq j <n$.  
+\end{definition}
+
+
+\begin{lemma}\label{SRlemma} Let $p>2$ be a prime.  If  $p\equiv_4 3$,  $n$ is even, $r$ is odd, and $gcd(n,c(i))$ is odd for an odd number of $i\in\{0,\,\cdots,\,m-1\}$ then the function  $\pi$ is an odd permutation; otherwise it is even. 
+\end{lemma}
+
+\begin{lemma}\label{2isp} 
+Let $\pi: M_{m,n}(\GF(2^r))\rightarrow M_{m,n}(\GF(2^r))$. If $m\cdot r\cdot gcd(n,c(0))=1$ and $n=2$ then $\pi$ is an odd permutation; otherwise it is an even permutation.
+\end{lemma}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%THIS IS A NEW PROOF FOR THE PARITY OF THE SHIFT ROW FUNCTION. NOTE THAT THE PROOF IS INCOMPLETE:   %
+%(1) PROOF FOR d-CYCLES   and (2) PROOF FOR THE PARITY CONSIDERING ALL the Rows  are missing!                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+To illustrate the proof of Lemma 8 first we give an explanation how we count the number of 2-cycles of the $\pi$ -function by counting the number of monic irreducible polynomials of degree $m$ over $GF(q)$. Note that if $p(x)\in GF(q)[x]$ has root $\alpha$, then it also has $\alpha^q = f(\alpha)$ as a root. Thus a monic irreducible polynomial of degree $m$ has factorization
+$$ (x - \alpha)(x - \alpha^{q})(x - \alpha^{q^2}) ...(x-\alpha^{q^{m-1}}).$$ %(See Proposition 2.0.1 and Proposition 20.3 in [2].)
+
+If $GF(q) \subset F\subset GF(q^m)$ is a field, then for each $a \in F$, $f(a) = a^q \in F$. Thus, if $\alpha \in GF(q^m)\setminus \cup \lbrace F: GF(q) \subseteq F\subset GF(q^m) \mbox{ a field} \rbrace$ then also $\displaystyle {f(\alpha) \in GF(q^m)\setminus \cup \lbrace F: GF(q) \subseteq F \subset GF(q^m) \mbox{ a field}\rbrace}$. Thus, (by Theorem \ref{FM1} and Theorem \ref{FM2}) there is a bijection between the set of all monic irreducible polynomials over $GF(q^m)$ and the set of $m$-element sets $\lbrace\alpha, \alpha^1, \alpha ^{q^2}, ..., \alpha^{q^{m-1}}\rbrace \in GF(q^m)\smallsetminus \cup \lbrace F: GF(q)\subseteq F \subset GF(q^m)\rbrace$.
+Because any two distinct sets are disjoint we have that the number of monic irreducible polynomials of degree $m$ is $\displaystyle \frac{1}{m} \sum_{d|m} \mu(d) q ^{m/d}$. We make use of the following theorem.
+
+
+\begin{theorem} $([2], \textnormal{Theorem }2.0.8)$
+The group $\displaystyle G=\mbox{Aut}_{GF(q)}(GF(q^m))$ of automorphisms of $GF(q^m)$ that are the identity map on $GF(q)$ (they fix the element in $GF(q)$) is cyclic of order $m$ generated by the Frobenius element (map) $f: GF(q^m) \mapsto GF(q^m)$ defined as $f(a) = a^q$.
+\end{theorem}
+Thus, $\vert G\vert=|\langle f \rangle|= m$. By Lagrange's theorem, we have that if $H$ is a subgroup of $G$ then $d = |H| \Big| |G| = m$. But, $G$ is a cyclic group and so $\langle f^{m/d}\rangle = H$.
+%(See Theorem 4.3 in \cite{G}.)
+
+Also, note that $f: \GF(q^m) \mapsto \GF(q^m)$ is a permutation which has fixed points which are exactly the elements of $GF(q)$. Similarly, if $d|m$ then $ f^{m/d} : GF(q^m) \mapsto GF(q^m)$ is a permutation and it has fixed points of exactly the elements of $GF(q^{m/d})$. 
+
+In the analysis below we use the fact that for every prime power $q > 1$ and every positive integer $m$, there exists a primitive normal basis of $GF(a^m)$ over $GF(q)$. Let $\alpha, \alpha^q, \alpha^{q^2}, ..., \alpha^{q^{m-1}}$ be the primitive normal basis, where $\alpha$ (and $\alpha ^{q^i}, i \leqslant m-1$) is a generator of the multiplicative group of $GF(q^m)$. Thus, each element $x\in GF(q^m)$ can be uniquely written as $$ x = a_0\alpha + a_1 \alpha ^q + ...+ a_{m-1}\alpha^{q^{m-1}}$$ where $a_0, a_1, ..., a_{m-1} \in GF(q)$. Note that
+\begin{align*}
+x_1 &= f(x) = a_0 f(\alpha) + a_1 f(\alpha^q) + ...+ a_{m-1}f(\alpha^{q^{m-1}})\\
+&= a_{m-1}\alpha + a_0\alpha^q + a_1\alpha^{q^2}+...+a_{m-2}\alpha^{q^{m-1}}\\
+&...\\
+x_m &= f(x_{m-1}) = a_0\alpha + a_1 \alpha^q + ...+ a_{m-1}\alpha^{q^{m-1}}
+\end{align*}
+The Frobenius map $f: GF(q^m)\mapsto GF(q^m)$ is a permutation on $GF(q^m)$ that fixes the elements in $GF(q)$. Also, the  Frobenius map $f^{m/c}: GF(q^m) \mapsto GF(q^m)$ is a permutation on $GF(q^m)$ that fixes the elements in $GF(q^k), k|m$.  These elements are exactly the $x$'s such that 
+\begin{align*}
+ f^k(x) &= \underbrace{(f\circ f\circ \cdots \circ f)}_{k\mbox{-times}}(x) = x\\
+ f^k(x)&= x^{q^k} = a_0 \alpha^{q^k} + a_1\alpha^{q^{k+1}}+\cdots + a_{m-1}\alpha^{q^{m-1+k}}\\
+ &\downarrow\\
+ &(a_{m-k-1},\cdots, a_{m-1}, a_{0},\cdots, a_{m-k-2})
+ \end{align*}
+ 
+$x\mapsto f^k(x)$ models ``shifting" by $k$-units. The fixed points of $f^k= \underbrace{(f\circ f\circ \cdots \circ f)}_{k\mbox{-times}}$ correspond bijectively to $(a_0,a_1,\cdots a_{m-1})\in (GF(q))^m$ which are fixed under $k$-shifts (they are elements in $(GF(q))^m$ that when shifted $k$-units return to the original configuration).
+
+For $d|m$, $$ f^d: GF(q^m)\mapsto GF(q^m)$$ is a permutation that fixes the elements in $GF(q^d)$ The $x$'s in $GF(q^m)$ fixed by $f^d$ are of the form $x = a_0\alpha+a_1\alpha+\cdots + a_{m-1}\alpha^{q-1}$ for which $d$-shifts returns again the same $x$, i.e.
+$$ f^d(x) = x \quad \mbox{or}\quad \underbrace{f\circ f\circ \cdots \circ f)}_{d\mbox{-times}}(x) = x$$
+
+\begin{definition}
+$\displaystyle{Fix(f^d) = \lbrace x \in GF(q^m) : f^d(x) = x \rbrace }$
+\end{definition}
+
+ Now we consider $f^{d'}$ where $d'|d$ and $d' \neq d$. The set $Fix(f^d)$ is in bijective correspondence with $$(a_0, a_1, ..., a_{m-1})\in (GF(q))^m$$ that are fixed points under $d$-shifts but not under $d'$-shifts for $d'|d$ and $d'\neq d$.
+
+ The elements $x\in GF(q^m)$ for $d|m$ require exactly $d$ applications of $f$ to get back to $x$.
+
+$$f^d(x) = x$$
+$$(x=x_0, x_i = f(x_{i-1})=x, i \in \mathbb{N})$$
+$$d = \min \lbrace i \in \mathbb{N}: i> 0 \mbox{ and } x_i = x\rbrace$$
+
+ Denote $$\displaystyle{ C(f,d) = \left| Fix(f^d)\setminus \bigcup_{\substack{d'|d\\d'\neq d}} Fix (f^{d'})\right|}$$
+ When considered as a permutation, $f: GF(q^m)\mapsto GF(q^m)$, $C(f,d)/d$ is the number of $d$-cycles in the disjoint cycle notation of $f$.
+\begin{align*}
+|Fix(f^d)| &= \sum_{d'|d} C(f,d')\\
+|Fix(f^d)|&= q^d
+\end{align*}
+Applying the M\"{o}bius Inversion Theorem we find
+$$ C(f,d) = \sum_{d'|d}\mu (d')q^{d/d'}.$$
+
+Remember the correspondence between $f^d$ and $x_i = f(x_{i-1}), i\in \mathbb{N}$.
+$$ (x_0,x_1,... , x_{d-1})\mbox{ is a $d$-cycle}$$
+$$ |\lbrace x_0, x_1,\cdots, x_{d-1}\rbrace|=d$$
+$$\lbrace x_0, x_1,..., x_{d-1}\rbrace \subseteq Fix(f^d) \setminus \bigcup_{\substack{d'|d\\d'\neq d}} Fix(f^{d'}).$$
+
+Since $(x_0, x_1,..., x_{d-1}) =  (x_1,..., x_{d-1}, x_0)$ the number of $d$-cycles is $\frac{1}{d}$ of $C(f,d)$.
+
+So to count the number of $d$-cycles we have 
+$$ \frac{1}{d} C(f,d) = \frac{1}{d}\sum_{d'|d}q^{d/d'}.$$
+
+Now consider a more general
+$$ f^j: GF(q^m) \mapsto GF(q^m) \quad \quad \mbox{for some } 1 \leqslant j \leqslant m.$$
+
+$$ Fix(f^j) = Fix(f^{\gcd(m,j)})$$
+For $\displaystyle{ d | \mbox{order}(f^j) = \frac{m}{\gcd(j,m)}}$ (see \cite{G}, Theorem 4.2), we count the number of $d$-cycles in the disjoint cycles notation of $f^k$.  These will be 
+$$ Fix((f^j)^d)\setminus \bigcup_{\substack{d'|d\\d'\neq d}} Fix(f^j)^{d'}$$
+
+\begin{lemma}
+For $\displaystyle{d|\frac{m}{\gcd(j,m)}}$ we have 
+$$ Fix(f^{jd}) = Fix(f^{\gcd(j,m)\cdot d})$$
+\end{lemma}
+
+\begin{proof}
+As before we have that if 
+\begin{align*}
+e&=\gcd(j,m)
+&= k\cdot j + l\cdot m \quad \quad (k> 0, k\in \mathbb{N})
+\end{align*}
+then $$ (f^j)^d(x) = x \mbox{ implies } (f^e)^d (x)=x.$$
+If $(f^e)^d(x)=x$ then $(f^j)^d(x) = x$ since $e\cdot d | j\cdot d$.
+\end{proof}
+
+We know that the cardinality of $ C(f,d)=Fix((f^d)^e)\setminus\bigcup_{\substack{d'|d\\d'\neq d}} Fix (f^{f'e})$. Again, we have that $ Fix ((f^d)^e) = \sum_{d'|d} C(f^e, d')$ and so $ q^{de} = \sum_{d'|d} C(f^e, d')$. Applying the M\"{o}bius inversion formula,  we have that
+$$ C((f^d)^e) = \sum_{d'|d} \mu(d')q^{de/d'}$$
+and so the number of $d$-cycles is
+
+$$\frac{1}{d}C(f^j, d) = \frac{1}{d} \sum \mu(d') \cdot q^{\frac{d\cdot \gcd(j,m)}{d'}}$$
+\mbox{}
+
+Now we need to analyse the parity of $f^j$ as a permutation of $GF(q^m)$. Since $|\langle f\rangle| = m$, then the order $ord(f^j)= \frac{m}{\gcd(j,m)}$. We know that 
+%(See \cite{G}, Theorem 4.2.)
+
+$$ ord(f^j) = lcm\lbrace \mbox{lengths of cycles in disjoint cycle decomposition}\rbrace$$
+%(See \cite{G}, Theorem 5.3.)\\
+
+Thus, the disjoint cycles in the cycle decomposition of $\displaystyle{ f^j}$ have lengths that are divisors of $\displaystyle{\frac{m}{\gcd(j,m)}}$.  If $\displaystyle \frac{m}{\gcd(j,m)}$ is odd then $f^j$ is an even permutation. This shows that we need to examine the case when $\displaystyle{\frac{m}{\gcd(j,m)}}$ is even. The number of $2$-cycles in the disjoint cycle form of $f^j$ is
+\begin{align}
+\dfrac{1}{2}\sum_{d|2} \mu(d) \cdot q^{2\cdot \gcd(j,m)/d}&= \dfrac{1}{2} \left( a^{2\gcd(jm)}-q^{\gcd(j,m)}\right)\\
+&= \dfrac{1}{2} \cdot q^{\gcd(j,m)}\left( q^{\gcd(j,m)} -1\right)\nonumber
+\end{align}
+
+{\bf Case 1:} If  $q \mod 4 = 1$ then $(q^{\gcd(j,m)}-1)\mod 4 = 0$ and so the number of $2$-cycles in this case  is even.
+
+{\bf Case 2: } If $q \mod 4 = 3$ and $\gcd(j,m)$ is even then the numerator of the equation (1) is a multiple of 4 and so (1) is an even number.  If $q \mod 4 = 3$ and  $\gcd(j,m)$ is odd then $(q^{\gcd(j,m)} -1) \mod 4 = 2$ It follows that
+$$ \dfrac{q^{\gcd(j,m)}(q^{\gcd(j,m)}-1)}{2}$$
+is odd, and in this case $f^j$ has an odd number of $2$-cycles.
+
+
+
+Note that this does not prove yet the number or $d$-cycles ($d>2$). The complete proof will be given in the next draft of the paper. Next we generalize the $\pi$-function to $\pi^\ell : M^\ell_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$.
+
+
+
+We now generalize to Lane.
+
+\begin{definition}
+Let $\pi^\ell : M^\ell_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$ be defined as $\pi^\ell([A_1 \dots A_\ell]) = [\pi(A_1), \dots, \pi(A_\ell)]$ where each $A_k \in M_{m,n}(\GF(p^r))$.
+\end{definition}
+
+\begin{definition}
+Let $\pi_i : M^\ell_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$ by $\pi_i([A_1 \dots A_i \dots A_\ell]) = [A_1 \dots \pi(A_i) \dots A_\ell]$ where each $A_k \in M_{m,n}(\GF(p^r))$.
+\end{definition}
+
+\begin{lemma}
+The function $\pi^\ell = \pi_{k_1} \circ \dots \circ \pi_{k_\ell}$ where $(k_1, \dots, k_\ell)$ is some permutation of $(1, \dots, \ell)$.
+\end{lemma}
+\begin{proof}
+We see that \\
+$
+\begin{array}{lcl}
+\pi_{k_1} \circ \dots \circ \pi_{k_\ell}([A_1 \dots A_{k_{\ell}} \dots A_\ell]) & = & \pi_{k_1} \circ \dots \circ \pi_{k_{\ell -1}}([A_1 \dots \pi(A_{k_\ell}) \dots A_\ell]) \\
+& = & [\pi(A_1), \dots, \pi(A_\ell)] \\
+& = & \pi^\ell([A_1 \dots A_\ell])
+\end{array}
+$
+
+by induction.
+\end{proof}
+
+
+\begin{lemma}
+The permutation $\pi_i$ is odd if and only if $\pi: M_{m,n}(\GF(p^r)) \to M_{m,n}(\GF(p^r))$ is odd and $p^{rmn(\ell -1)}$ is odd. Therefore, each $\pi_i$ has the same parity.
+\end{lemma}
+\begin{proof}
+First, we show that the cycle decomposition of $\pi_i$ is equal to that of $\pi(A_i)$. Since $\pi_i$ acts as the identity on each $A_k$ such that $k \neq i$, it follows that,\
+$(\pi_i([A_1 \dots A_i \dots A_\ell]))^N = [A_1 \dots \pi(A_i)^N \dots A_\ell]$ and thus\\
+$\pi_i([A_1 \dots A_i \dots A_\ell])$ has the same cycle decomposition as $\pi(A_i)$.\
+
+Now fix $A_i \in M_{m,n}(\GF(p^r))$. Let $k$ be the number of 2-cycles in the 2-cycle decomposition of $\pi(A_i)$. We see that there are $p^{rmn(\ell - 1)}$ elements of $M^\ell_{m,n}(\GF(p^r))$ where $A_i$ is fixed as above. Thus, the number of 2-cycles in the decomposition of $\pi_i$ with $A_i$ fixed is $k \cdot p^{rmn(\ell - 1)}$. If we let $K$ be the sum of the number of 2-cycles in the decomposition of $\pi(A_i)$ over each element of $M_{m,n}(\GF(p^r))$ that $A_i$ can be, we see that the total number of 2-cycles in the decomposition of $\pi_i$ with $A_i$ no longer fixed is $K \cdot p^{rmn(\ell -1)}$. Thus $\pi_i$ is odd if and only if $K$ is odd ($\pi$ is odd) and $p^{rmn(\ell -1)}$ is odd. As $\pi, p, r, m, n$ and $\ell$ are the same for all $\pi_i$, the final assertion follows.
+\end{proof}
+
+\begin{theorem}
+The permutation $\pi^\ell$ is odd if and only if $\ell$ is odd and every $\pi_i$ is odd.
+\end{theorem}
+\begin{proof}
+This result follows from the previous two lemmata.
+\end{proof}
+
+
+
+
+\subsection{{\bf Analysis of the MixColumns-like function}  ($\rho$-function) }
+
+\begin{definition}
+Let $\rho: M_{m,n}(\GF(p^r))\rightarrow M_{m,n}(\GF(p^r))$ be the mapping defined as the parallel application of $n$ ``column" mappings $\rho_j:M_{m,1}(\GF(p^r)) \to M_{m,1}(\GF(p^r))$ defined by $\rho(a)=b$ if and only if $b_j=\rho_j(a_j)$ for all $0 \le j < n$, where each $\rho_j$ is given by $\rho_j(x)=C\cdot x$ for all $x \in M_{m,1}(\GF(p^r))$, and where $C\in M_{m,m}(\GF(p^r)) $  is an invertible diffusion matrix.
+\end{definition}
+\begin{lemma}\label{MClinear} The function $\rho$  is a linear transformation of $M_{m,n}(\GF(p^r))$.
+\end{lemma}
+\begin{lemma}\label{MClemma}
+Let $C\in M_{m,m}(\GF(p^r))$ be an invertible diffusion matrix and $n>1$.  Then the  function $\rho$ is an odd permutation if and only if  $p$, $n$, and $\frac{p^{rm}- 1}{\vert\langle C \rangle\vert}$ are odd.
+\end{lemma}
+
+We now generalize these definitions and results to apply in Lane.
+
+\begin{definition}
+Let $\rho^\ell : M^{\ell}_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$ be defined as\\ $\rho^\ell([A_1 \dots A_\ell]) = [\rho(A_1) \dots \rho(A_\ell)]$ where each $A_k \in M_{m,n}(\GF(p^r))$.
+\end{definition}
+
+\begin{lemma}
+The permutation $\rho^\ell$ is odd if and only if $\rho$ is odd and $\ell$ is odd.
+\end{lemma}
+\begin{proof}
+As $\rho$ acts upon each column of the matrix $M_{m,n}(\GF(p^r))$ in the same way, it is clear that $\rho^\ell : M^{\ell}_{m,n}(\GF(p^r)) \to M^{\ell}_{m,n}(\GF(p^r))$ is equivalent to $\rho^* : M_{m,\ell n}(\GF(p^r)) \to M_{m,\ell n}(\GF(p^r))$. Our result follows from the previous lemmata.
+\end{proof}
+
+
+\subsection{{\bf Analysis of the generalized AddConstants round function} ($\Omega_k$-function)}
+
+We first establish notation and then proceed to argue the parity of AddConstants.
+
+\begin{lemma}
+There is a natural bijection $\phi : M_{m,n}(\GF(p^r)) \to M_{1,n}(\GF(p^{rm}))$ between representations of elements in GF$(p^{rmn})$ given by \[\phi \left( \begin{bmatrix}
+  a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+  a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+  \vdots  & \vdots  & \ddots & \vdots  \\
+  a_{m,1} & a_{m,2} & \cdots & a_{m,n}
+ \end{bmatrix} \right) = \begin{bmatrix}
+  \overline{A}_{1,1} & \overline{A}_{1,2} & \cdots & \overline{A}_{1,n}
+ \end{bmatrix}\]
+
+  where $\overline{A}_{1,i} = a_{1,i}a_{2,i} \dots a_{m,i}$.
+\end{lemma}
+\begin{proof}
+This map is well defined and has the obvious inverse.
+\end{proof}
+\begin{corollary}
+This extends to a map $\phi^\ell : M^\ell_{m,n}(\text{GF}(p^r)) \to M^\ell_{m,n}(\text{GF}(p^r))$ defined as $\phi^\ell([A_1, \dots A_\ell]) = [\phi(A_1) \dots \phi(A_\ell)]$. We denote $\phi(A_i) = [\overline{A}_{i,1} ~ \overline{A}_{i,2} ~ \cdots ~ \overline{A}_{i,n}]$.
+\end{corollary}
+
+Lane uses a Linear Feedback Shift Register to generate the constants $k_i$ that are utilized in the AddConstants function. The algorithm is defined such that the connection polynomial induces a reciprocal polynomial $\eta(x)$ which is primitive in $\GF(p^{rm})$. This implies for $\alpha$ such that $\eta(\alpha) = 0$, and initial value $k \in \GF(p^{rm})$, each of our states will be expressed in the sequence $k, \alpha k, \alpha^2 k, \dots, \alpha^{p^{rm}-1} k = k$.
+
+\begin{definition}
+Let $\Omega_k : M^\ell_{m,n}(\text{GF}(p^r)) \to M^\ell_{m,n}(\text{GF}(p^r))$ denote the mapping
+$$
+\Omega_k \left(\begin{bmatrix}
+  \phi(A_i) \dots \phi(A_\ell)
+ \end{bmatrix} \right) =
+ [ \overline{A}_{1,1} + k \quad \overline{A}_{1,2} + \alpha \beta  \cdots  \overline{A}_{1,n} + \alpha^{n -1} k \dots $$
+$$
+ \dots  \overline{A}_{\ell,1} + \alpha^{(\ell - 1)n} k \quad  \overline{A}_{\ell,2} + \alpha^{(\ell - 1)n + 1} k  \cdots  \overline{A}_{\ell,n} + \alpha^{\ell n - 1} k]
+$$
+where $\begin{bmatrix}
+  \overline{A}_{i,1} & \overline{A}_{i,2} & \cdots & \overline{A}_{i,n}
+ \end{bmatrix}$
+ is the representation in $M_{1,n}(\GF(p^{rm}))$ and the $\alpha^i \beta$ are consecutive states of the LSFR.
+
+\end{definition}
+
+When performing multiple rounds of the Lane cipher, we maintain the internal state of the LFSR to generate the next set of round keys. We can therefore define an $s$-round key scheduling function.
+
+\begin{definition}\label{LFSRKS}
+An {\bf LFSR key scheduling function} $KS$, is the mapping $KS : \KK \rightarrow \KK^s$, $k \mapsto (k, \alpha^{n\ell}k,~~ \alpha^{2n\ell}k,~~ \dots ~~, ~~ \alpha^{sn\ell}k)$ where $\alpha$ is the root of the associated polynomial of the LFSR.
+\end{definition}
+
+\begin{lemma}
+If $p>2$, the function $\Omega_k$ is an even permutation. If $p=2$, $\Omega_k$ is even if and only if $n > 1$.
+\end{lemma}
+
+\begin{proof}
+If $p > 2$ then all of the cycles in the permutation are odd. This implies that $\Omega_k$ is an even permutation. If $p = 2$, the number of 2-cycles is $2^n - 1$. Therefore, $\Omega_k$ is even if and only $n > 1$.
+\end{proof}
+
+
+
+
+\subsection{{\bf Analysis of the generalized AddCounter round function} ($\tau$-function) }
+
+\begin{definition}
+Let $\tau : M^\ell_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$ denote the mapping that adds a constant value $c \in \GF(p^{rm})$ to one column.
+\end{definition}
+
+\begin{lemma}
+For any prime $p>2$, the function $\tau$ is always even. For $p=2$, the function $\tau$ is even if and only if $rmn\ell \neq 1$ and $c \neq 0$.
+\end{lemma}
+\begin{proof}
+Fix some prime $p$. There are the two cases $c = 0$ and $c \neq 0$. If $c = 0$, then $\chi$ is identity and therefore it is an even permutation. Now, suppose $c \neq 0$, and let us consider the orbit of an arbitrary message in $M^\ell_{m,n}(\GF(p^r))$. Since we are adding in a field of characteristic $p$, it follows that only after applying $\tau$ exactly $p$ times we will return back to our original message. Therefore the set $M^\ell_{m,n}(\GF(p^r))$ under $\tau$ is partitioned into $p^{rmn\ell} / p = p^{rmn\ell - 1}$ disjoint cycles of length $p$.
+
+For any $p>2$ and any $r,m,n,\ell$ this means we can express $\tau$ as some positive number of disjoint cycles of odd length. Therefore, for any $p>2$, $\tau$ is an even permutation. For $p=2$ on the other hand, we have $2^{rmn\ell - 1}$ cycles of length 2. Ff $rmn\ell \neq 1$ then we have an even number of 2-cycles. Hence, for $p=2$, the function $\tau$ is even if and only if $rmn\ell \neq 1$ and $c \neq 0$.
+\end{proof}
+
+
+
+
+\subsection{{\bf Analysis of the generalized SwapColumn round function} ($\chi$-function) }
+
+\begin{definition}
+Let $\chi : M^\ell_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$ denote the mapping that swaps any number of pairs of columns of the representation of $M^\ell_{m,n}(\GF(p^r))$. Denote the number of pairs of columns swapped by $x$.
+\end{definition}
+
+\begin{lemma}
+For any prime $p > 2$, the permutation defined by $\chi$ is odd if and only if $p \equiv_4 3$, $rm$ is odd, and $x$ is odd. For $p = 2$, $\chi$ is odd if and only if $rm = 1$, $n\ell = 2$, and $x$ is odd. Otherwise $\chi$ is even.
+\end{lemma}
+
+\begin{proof}
+We first consider the case where $x = 1$. Then we are swapping two columns and leaving all other elements fixed. Without loss of generality suppose we are swapping the first and second columns. As $\chi(\chi(m)) = m$ for all $m \in M^\ell_{m,n}(\GF(p^r))$, the only cycles we need consider are 2 cycles. Each element $m \in M^\ell_{m,n}(\GF(p^r))$ with first and second columns different will be part of a 2-cycle. Thus, since we have $p^{2rm} - p^{rm}$ possible ways to select two distinct columns, and $p^{rm(n\ell - 2)}$ possible choices for the remaining elements, we have $\frac{1}{2}p^{rm(n\ell - 2)} \cdot (p^{2rm} - p^{rm})$ disjoint 2-cycles.
+
+If $p = 2$ the only way for this to be odd is if $n\ell = 2$ and $rm = 1$. For all prime $p > 2$ then for this to be odd we must have $p^{2rm} - p^{rm} = p^{rm}(p^{rm} - 1) \equiv_4 2$, or $p^{rm} \equiv_4 3$, which can only happen if $p \equiv_4 3$ and $rm$ is odd. For $x > 1$ we view $\chi$ as the composition of functions $\chi_1 \circ \chi_2 \circ \cdots \circ \chi_{x}$, where each $\chi_i$ swaps one of the $x$ pairs of columns. Seen in this way it is clear that in order for the overall parity to be odd, we must have $x$ odd in addition to the conditions above.
+\end{proof}
+
+
+
+
+\section{Analysis of Generalized Lane Ciphers}
+
+
+
+\begin{corollary}
+Let $p$ be an odd prime. The composition $\rho \circ \pi \circ \lambda$ is an odd permutation if and only if exactly one of  the functions  $\lambda$, $\rho$, and $\pi$ is odd.
+\end{corollary}
+
+\begin{corollary}
+Let $p$ be an odd prime. The composition $\rho^\ell \circ \pi^\ell \circ \lambda^\ell$ is an odd permutation if and only if exactly one of the functions $\lambda$, $\rho$ and $\pi$ is odd and $\ell$ is odd.
+\end{corollary}
+
+
+\begin{definition}
+Let $m,n,r,\ell>0$ be natural numbers. The mapping $L[k]: M^\ell_{m,n}(\GF(p^r))\rightarrow M_{m,n}(\GF(p^r))$ for some $k \in \KK$ is defined as $L[k]=\chi \circ \tau \circ \Omega_k \circ \rho^\ell \circ \pi^\ell \circ \lambda^\ell$ is called a {\bf one round generalized Lane cipher}.
+\end{definition}
+
+
+\begin{definition}
+Let $m, n, r, \ell >0$ be natural numbers.  For $s>1$ the  mapping $L_s[k]: M^\ell_{m,n}(\GF(p^r))\rightarrow M^\ell_{m,n}(\GF(p^r))$ defined as
+\[
+L_s[k] = \chi \circ \rho^\ell \circ \pi^\ell \circ \lambda^\ell \circ L[k_{s}] \circ L[k_{s-1}] \circ \dots \circ L[k_1]
+\]
+where $KS(k) = (k_1, \dots, k_{s})$ (see Definition \ref{LFSRKS}) is called {\bf $s$-round generalized Lane cipher}.
+\end{definition}
+Notice that this adds a finalization round which excludes the AddConstants and AddCounter functions.
+
+\begin{theorem}
+Let $m, n, r, \ell >0$ be natural numbers.
+\begin{enumerate}
+\item If $\rho^\ell \circ \pi^\ell \circ \lambda^\ell$ is even, then $L_s[k]$ is odd if and only if $\chi$ is odd and $s$ is even.
+\item If $\rho^\ell \circ \pi^\ell \circ \lambda^\ell$ is odd, then $L_s[k]$ is odd if and only if $\chi$ is even and $s$ is even.
+\end{enumerate}
+\end{theorem}
+
+\begin{corollary}
+Let $m, n, r, \ell >0$ be natural numbers. The set of $s$-round Lane functions do not form a group in the following cases:
+\begin{enumerate}
+\item If $\rho^\ell \circ \pi^\ell \circ \lambda^\ell$ is even, $\chi$ is odd and $s$ is even.
+\item If $\rho^\ell \circ \pi^\ell \circ \lambda^\ell$ is odd, $\chi$ is even and $s$ is even.
+\end{enumerate}
+\end{corollary}
+
+\subsection{Analyzing the generalized Lane Cipher as a translation based cipher}
+
+Here we analyze the generalized Lane Cipher as a translation based cipher following the classifications of such cipher in \cite{Caranti}. We also rely on the results of (OUR OTHER PAPER) in which we characterize AES based ciphers as translation based ciphers.
+
+Consider the vector space representation of the message space $$\MM = V := V_1 \oplus \dots \oplus V_{mn\ell},$$ where $V_i \cong \GF(p^r)$.
+
+\begin{definition}
+An element $\gamma \in \Sym(V)$ is a {\bf bricklayer transformation} if $\gamma$ acts on an element $v = v_1 + \dots + v_{mn\ell}$ with $v_i \in V_i$ by 
+$$ \gamma v = \gamma_1 v_1 + \dots + \gamma_{mn\ell} v_{mn\ell},$$
+for some $\gamma_i \in \Sym(V_i)$.
+\end{definition}
+
+\begin{definition}
+A linear transformation $\psi$ is a {\bf proper mixing layer} if it leaves no sum of $V_i$, besides $\{0\}$ and $V$, invariant.
+\end{definition}
+
+\begin{definition}
+A function $\sigma_k: \MM \rightarrow \MM$ for some $k \in \MM$ is a {\bf translation} if for all $m \in \MM$, $m \mapsto m + k$.
+\end{definition}
+Notice that this function is similar to the AddRoundKey function in AES. The distinction between translations and the AddRoundKey function is that, if the key space is not a subset of the message space, then the addition operation in AddRoundKey is not well defined. Recall that given a master key we use the key scheduling function $KS : \KK \rightarrow \KK^s$ which generates a key for each of the $s$ rounds. Since the addition between $\MM$ and $\KK$ may not be well defined, we will define a new function, the key mapping function, which takes elements of $\KK$ to elements of $\MM$.
+\begin{definition}
+An {\bf $s$-round key mapping function} $\phi$ is any function $\phi : \KK \times \{1, \dots, s\} \rightarrow \MM$ where $\phi(k,h)$ is the $h$-th round key for master key $k$.
+\end{definition}
+
+\begin{definition}
+A block cipher $\mathcal{C} = \{\tau_k | k \in \KK\}$ over $\mathbb{F}_q$ is \textbf{translation based (tb)} if
+\begin{enumerate}
+\item each $\tau_k$ is the composition of $h$ round functions $\tau_{k,h}$, and $h = 1,\dots,s$ where in turn each round function can be written as a composition $\sigma_{\phi(k,h)} \circ \psi_h \circ \gamma_h$ of three permutations of $V$, where
+\begin{itemize}
+\item $\gamma_h$ is a bricklayer transformation not depending on $k$ and with $0 \gamma_h = 0$,
+\item $\psi_h$ is a linear transformation not depending on $k$,
+\item $\sigma_k$ is a translation and $\phi$ is a key mapping function.
+\end{itemize}
+\item for at least one round index $h_0$ we have that
+\begin{itemize}
+\item $\psi_{h_0}$ is a proper mixing layer, and
+\item the map $\KK \to \MM$ by $k \mapsto \phi(k,h_0)$ is surjective.
+\end{itemize}
+\end{enumerate}
+\end{definition}
+
+We now show that the generalized Lane cipher can be expressed in terms of $\gamma$, $\psi$ and $\sigma_{\phi(k,h)}$. Before continuing, we will prove the following important lemmata
+
+\begin{lemma} \label{SBBricklayer}
+The function $\lambda^\ell$ is a bricklayer transformation.
+\end{lemma}
+
+\begin{proof} By \cite{REU}, $\lambda$ is a bricklayer transformation. Since $\lambda^\ell$ applies $\lambda$ to $\ell$ matrices simultaneously, our result follows.
+\end{proof}
+
+\begin{lemma} \label{CommuteLinear}
+For any translation $\sigma_k$ and any linear transformation $T$ on $\MM$, $T \circ \sigma_k = \sigma_{T(k)} \circ T$
+\end{lemma}
+\begin{proof}
+Pick some $x \in \MM$. Since $T$ is a finite linear transformation, there exists a matrix $M$ such that $T(x) = Mx$. Therefore,
+\[
+(T \circ \sigma_k)(x) = M(x + k) = Mx + Mk = T(x) + T(k) = (\sigma_{T(k)} \circ T)(x)
+\]
+Since our choice of $x$ was arbitrary $T \circ \sigma_k = \sigma_{T(k)} \circ T$.
+\end{proof}
+
+\begin{theorem}
+The generalized Lane cipher satisfies part $(1)$ of the definition of translation based.
+\end{theorem}
+\begin{proof}
+Each round of the Lane cipher, $L[k]$ is defined by the following composition of functions $L[k]=\chi \circ \tau \circ \Omega_k \circ \rho^\ell \circ \pi^\ell \circ \lambda^\ell$.
+
+By Lemma \ref{SBBricklayer}, $\lambda^\ell$ is a bricklayer transformation. Now recall the definition of SubBytes, each entry $x$ of $M^\ell_{m,n}(\GF(p^r))$, $x \mapsto Ax^{-1} + B$. In order to force $\gamma_h (0)=0$, we add in the translation $\sigma_{\hat{B}}$ where $\hat{B}$ is the element from $M^\ell_{m,n}(\GF(p^r))$ in which all of the entries are $-B$. Let $\gamma_h = \sigma_{\hat{B}} \circ \lambda^\ell$. Then $\gamma_h (0) = \sigma_{\hat{B}} \circ \lambda^\ell (0) = \sigma_{\hat{B}} (A(0)+B) = 0$ as desired. So now we can write $L[k]=\chi \circ \tau \circ \Omega_k \circ \rho^\ell \circ \pi^\ell \circ \sigma_{-\hat{B}} \circ \gamma_h$.
+
+Next, notice that since $\tau$ and $\Omega_k$ are both translations, $\tau \circ \Omega_k = \Omega_{k^*}$ for some $k^* \in \MM$. So $L[k]=\chi \circ \Omega_{k^*} \circ \rho^\ell \circ \pi^\ell \circ \sigma_{-\hat{B}} \circ \gamma_h$. However, since $\chi$, $\pi$, $\rho$ are all linear by Lemma \ref{CommuteLinear}, $L[k]=  \Omega_{k'} \circ \sigma_{\hat{B}'} \circ \chi \circ \rho^\ell \circ \pi^\ell \circ  \gamma_h$ for some $k', \hat{B}' \in \MM$. Therefore, by choosing our $\phi$ function appropriately $\sigma_{\phi(k,h)} = \Omega_{k'} \circ \sigma_{\hat{B}'}$. So now we can write $L[k]= \sigma_{\phi(k,h)} \circ \chi \circ \rho^\ell \circ \pi^\ell \circ \gamma_h$.
+
+Finally, since all of $\chi$, $\pi$, $\rho$ are linear, we can define $\psi_h = \chi \circ \rho^\ell \circ \pi^\ell$. So the generalized Lane cipher satisfies part $(1)$ of the definition of translation based.
+\end{proof}
+
+The Lane cipher is a special case of a new class of ciphers which we will call the 'generalized AES ciphers on $\ell$ states'. The cases when the Lane cipher is a tb cipher will follow from the cases when generalized AES ciphers on $\ell$ states are tb ciphers.
+
+\section{Generalized AES on $\ell$ states}
+%Definitions, Parity Arguments (Generalized from this section), Proper Mixing iff,
+
+\begin{definition}
+The mapping $T^\ell_s[k] : M^\ell_{m,n}(\GF(p^r)) \to M^\ell_{m,n}(\GF(p^r))$ given by $T^\ell_s[k] = \sigma[k_s] \circ \chi \circ \rho^\ell \circ \pi^\ell \circ \lambda^\ell \circ \sigma[k_{s-1}] \circ \chi \circ \rho^\ell \circ \pi^\ell \circ \lambda^\ell \circ \dots \circ \sigma[k_1] \circ \chi \circ \rho^\ell \circ \pi^\ell \circ \lambda^\ell $ where $k_i = \phi(k,i)$ and $\phi$ is some key mapping function is called the {\bf generalized, $s$-round, AES-like cipher on $\ell$ states}.
+\end{definition}
+
+
+
+\begin{lemma}
+Let $C$ defined in $\rho^\ell$ be a proper mixing matrix, suppose that for all $k \in (1,\dots,n-1)$, there exists some $c_i$ (as defined in $\pi$) such that $j_a \cdot c_a + \dots + j_b \cdot c_b \equiv_n k$ for $j_i \in \naturals$, and that $\chi$ acts such that for all $A_i, A_j \in [A_1... A_\ell] \in M_{m,n}^\ell(\GF(p^r))$, there is a series of column swaps which results in at least one column of $A_i$ swapped with at least one column of $A_j$. (REWORD) Then the mixing layer $\chi \circ \rho^\ell \circ \pi^\ell$ is a proper mixing layer.
+\end{lemma}
+\begin{proof}
+Consider some subspace $U$ of $V$ that is invariant under $\chi \circ \rho^\ell \circ \pi^\ell$. Assume without loss of generality that $V_1 \subset U$. From [OURPAPER], all of $M^1_{m,n}(\GF(p^r)) \in U$. Using $\chi$ it is clear that some column of $M^j_{m,n}(\GF(p^r))$ must be in $U$ for all $j \in (1, \dots, \ell)$. Again from [OURPAPER] we see that $M^j_{m,n}(\GF(p^r))$ is in $U$ for all $j \in (1, \dots, \ell)$.
+\end{proof}
+
+\begin{theorem}
+Suppose that $\chi \circ \rho^\ell \circ \pi^\ell$ is a proper mixing layer. Then $T^\ell_s[k]$ has a key mapping that is surjective onto a set of additive generators of $\MM$ if and only if $T^\ell_s[k]$ generates $A_{|\MM|}$ or $S_{|\MM|}$.
+\end{theorem}
+
+
+
+
+\section{Analysis of Lane 256 and Lane 512 Ciphers}
+
+In Lane's implementation $p = 2$, $r = 8$, $m = 4$, $n = 4$ and $\ell = 2$ or $\ell = 4$. These corollaries follow from the generalized case.
+
+\begin{corollary}
+SubBytes ($\lambda^\ell$-function) is even in Lane 256 and Lane 512.
+\end{corollary}
+
+\begin{corollary}
+ShiftRows ($\pi^\ell$-function) is even in Lane 256 and Lane 512.
+\end{corollary}
+
+\begin{corollary}
+MixColumns ($\rho^\ell$-function) is even in Lane 256 and Lane 512.
+\end{corollary}
+
+\begin{corollary}
+SwapColumns is even in Lane 256 and Lane 512.
+\end{corollary}
+
+\begin{theorem}
+Both Lane-256 and Lane-512 are always even permutations.
+\end{theorem}
+
+
+\subsection{Computational results}
+\begin{theorem}
+Neither the set of encryption functions of Lane-256 nor those of Lane-512 form a group under functional composition. 
+\end{theorem}
+
+\begin{proof}
+We fix a message $M \in \MM$ and apply Lane-256 (Lane-512) to it, over all possible keys. We find computationally that the message (PARTICULAR MESSAGE HERE?) is not left fixed by any of the keys, thus the identity is not an element of the set of Lane-256 (Lane-512) encryption permutations.
+\end{proof}
+
+
+\begin{thebibliography}{9}
+
+\bibitem {B} L. Babai, \emph {The probability of generating the symmetric group}, {\bf Journal of Combinatorial Theory} 52 (1989), 148--153.
+
+\bibitem {BB} E. Barkan and E. Biham, \emph {In how many ways can you write Rijndael?}, Advances in Cryptology - ASIACRYPT 2002,  {\bf Lecture Notes in Computer Science}, Vol. 2501,  Springer-Verlag (2002), 160--175.
+
+\bibitem{REU} {L. Babinkostova, K. Bombardier, M. Cole, T. Morrell, and C. Scott, \emph{ Algebraic Structure of generalized Rijndael-like SP networks}, {\bf Groups Complexity Cryptology}, Vol. 6 Issue 1 37-54, (2014) }
+
+\bibitem {BS} E. Biham and A. Shamir, \emph {Differential Cryptanalysis of the Data Encryption Standard},  {\bf Springer Verlag}, (1993).
+
+\bibitem {BK} A. Biryukov and D. Khovratovich, \emph {Related-key cryptanalysis of the full AES-192 and AES-256},  Advances in Cryptology - ASIACRYPT 2009, {\bf Lecture Notes in Computer Science}, Vol. 5912 (2009), 1--18. 
+
+\bibitem {BKN}  A. Biryukov, D. Khovratovich and I. Nikolic, \emph{ Distinguisher and related-key attack on the full AES-256}, Advances in Cryptology - CRYPTO '09, {\bf Lecture Notes in Computer Science}, Vol. 5677 (2009) 231--249. 
+
+\bibitem {BDKS} A. Biryukov, O. Dunkelman, N. Keller, D. Khovratovich and A. Shamir, \emph {Key Recovery Attacks of Practical Complexity on AES-256 Variants with up to 10 Rounds}, Advances in Cryptology - CRYPTO 2010, {\bf Lecture Notes in Computer Science}, Vol. 6110 (2010),  299--319.
+
+\bibitem {BKR} A. Bogdanov, D. Khovratovich and C. Rechberger, \emph {Biclique cryptanalysis of the full AES},  Advances in Cryptology - CRYPTO 2011,  {\bf Lecture Notes in Computer Science}, Vol. 7073 (2011),  344--371.
+
+\bibitem {BGK} D.K. Branstead, J. Gait and S. Katzke,  \emph {Report of the Workshop on Cryptography in Support of Computer Security}, {\bf National Bureau of Standards}, (1977)  NBSIR 77--1291.
+
+\bibitem{C} A. Caranti, F. Dalla Volta, M. Sala and F. Villani, \emph {Imprimitive permutation groups generated by the round functions of key-alternating block ciphers and truncated differential cryptanalysis}, {\bf Computing Research Repository - CoRR} , Vol. abs/math/0, (2006).
+
+\bibitem {CMR} C. Cid, S. Murphy, and M. J. B. Robshaw, \emph {Small scale variants of the AES},  FSE 2005 Proceedings of the $12^{th}$ International Workshop on Fast Software Encryption, {\bf Lecture Notes in Computer Science}, Vol. 3557 (2005), 145--162.
+
+\bibitem {CMRB} C. Cid, S. Murphy and M.J.B. Robshaw, \emph {Algebraic Aspects of the Advanced Encryption Standard}, {\bf Springer}, New York, (2006).
+
+\bibitem {CW} K. W. Campbell and M. J. Wiener, \emph {DES is not a Group},  {Advances in Cryptology - CRYPTO '92},  {\bf Lecture Notes in Computer Science}, Vol. 740 (1993),  512--520.
+
+\bibitem{CE} D. Coppersmith and E. Grossman, \emph {Generators for {C}ertain {A}lternating {G}roups with {A}pplications to {C}ryptography}, {\bf SIAM Journal on Applied Mathematics}, Vol. 29 (1975), 624--627.
+
+\bibitem {CP} N. Courtois and J. Pieprzyk, \emph {Cryptanalysis of Block Ciphers with Overdefined Systems of Equations},  Advances in Cryptology - ASIACRYPT 2002, {\bf Lecture Notes in Computer Science},  Vol. 2501 (2002),  267--287.
+
+\bibitem  {CBA} N.T. Courtois, G. V. Bard and S. V. Ault, \emph {Statistics of Random Permutations and the Cryptanalysis Of Periodic Block Ciphers}, {\bf Journal of Mathematical Cryptology},  Vol.  2 (2008), 1--20.
+
+\bibitem {DR}  J. Daemen and V. Rijmen, \emph { AES Proposal: Rijndael},  {\bf NIST AES Proposal}, (1998).
+
+\bibitem {DRB} J. Daemen and V. Rijmen, \emph {The Design of Rijndael}, {\bf Springer-Verlag}, Berlin, (2002).
+
+
+\bibitem {D} J.D. Dixon,  \emph {The probability of generating the symmetric group}, {\bf Mathematics  Zeitschrift},  Vol. 110 Issue 3 (1969), 199--205.
+
+\bibitem {FKS} N. Ferguson, J. Kelsey, S. Lucks, B.  Schneier, M. Stay, D. Wagner and D. Whiting, \emph {Improved cryptanalysis of Rijndael}, Proceedings of Fast Software Encryption, {\bf Lecture Notes in Computer Science},  Vol. 1978 (2001), 213--230. 
+
+\bibitem {GM} H. Gilbert and M. Minier, \emph {A Collision Attack on 7 Rounds of Rijndael}, {\bf  Proceedings of the 3rd AES Candidate Conference} (2000),  230--241.
+
+\bibitem {DKS} O. Dunkelman, N. Keller and A. Shamir, \emph {Improved Single-Key Attacks on 8-Round AES-192 and AES-256},  Advances in Cryptology - ASIACRYPT 2010,  {\bf Lecture Notes in Computer Science}, Vol. 6477 (2010), 158--176.
+
+\bibitem{G} {J. A. Gallian}, \emph {Contemporary {A}bstract {A}lgebra}, {\bf Huston {M}ifflan {C}ompany}, (1992).
+
+\bibitem {GP} H. Gilbert and T. Peyrin, \emph {Super-Sbox Cryptanalysis: Improved Attacks for AES-Like Permutations},  FSE 2010 Proceedings of the $17^{th}$ International Workshop on Fast Software Encryption, {\bf Lecture Notes in Computer Science}, Vol. 6147 (2010),  365--383.
+
+\bibitem {HSW} G. Hornauer, W. Stephan and R. Wernsdorf, \emph {Markov ciphers and alternating groups}, Advances in Cryptology - EUROCRYPT '93, {\bf Lecture Notes in Computer Science}, Vol. 765 (1994), 453--460.
+
+\bibitem{IR} K. Ireland and M. Rosen, \emph {A classical introduction to modern Number Theory}, {\bf Springer-Verlag Graduate Texts in Mathematics} 84 (Second Edition), (1990).
+
+\bibitem{Kaliski} B.S. Kaliski, R.L. Rivest, and A.T. Sherman, \emph {Is the Data Encryption Standard a Group? (Results of Cycling Experiments on DES)}, {\bf Journal of Cryptology}, Vol. 1 (1988), 3--36.
+
+\bibitem {KK} R. Kim, W. Koepf, \emph{Parity of the Number of Irreducible Factors for Composite Polynomials}, {\bf Finite Fields and Their Applications} Vol. 16, Issue 3 (2010), 137--143. 
+
+\bibitem {Mattarei} S. Mattarei, \emph {Inverse-closed additive subgroups of fields}, {\bf Israel Journal of  Mathematics} 159 (2007), 343--348.
+
+\bibitem {LSWD} T. Van Le, R. Sparr, R. Wernsdorf and Y. Desmedt,  \emph {Complementation-like and cyclic properties of AES round functions}, {\bf Proceedings of the 4th International Conference on the Advanced Encryption Standard}, Vol. 3373 (2005), 128--141.
+
+\bibitem{Mao} W. Mao, \emph {Modern Cryptography: Theory and Practice}, {\bf Prentice Hall}, (2003).
+
+\bibitem {Mattarei} S. Mattarei, \emph {Inverse-closed additive subgroups of fields}, {\bf Israel Journal of  Mathematics},  Vol. 159 (2007), 343--348.
+
+\bibitem{M}{L. Miller}, \emph {Generators of the Symmetric and Alternating Group}, {\bf The American Mathematical Monthly}, Vol. 48, (1941), 43 -- 44.
+
+\bibitem {MPW} S. Murphy, K.G. Paterson and P. Wild, \emph {A weak cipher that generates the symmetric group}, {\bf Journal of Cryptology}, Vol.  7 (1994), 61--65.
+
+\bibitem {MR} S. Murphy and M. J. B. Robshaw, \emph { Essential algebraic structure within the AES}, {\bf Proceedings of CRYPTO  2002},  Vol. 2442 (2002), 1--16.
+
+\bibitem {NIST}  National Institute of Standards and Technology (US),  \emph {Advanced Encryption Standard (AES)}, {\bf FIPS Publication 197}, (2001). 
+
+\bibitem {NIST1}   National Institute of Standards and Technology (US),  \emph {Recommendation for the Triple Data Encryption Algorithm (TDEA) Block Cipher}, {\bf Special Publication 800-67} (2004). 
+
+\bibitem {P} K.G. Paterson, \emph {Imprimitive permutation groups and trapdoors in iterated block ciphers},  FSE 1999 Proceedings of the $6^{th}$ International Workshop on Fast Software Encryption,  {\bf Lecture Notes in Computer Science}, Vol. 1636 (1999), 201-- 214.
+
+\bibitem{PRS}  S. Patel, Z. Ramzan and  G. S. Sundaram, \emph {Luby-Rackof Ciphers: Why XOR Is Not So Exclusive}, Selected Areas in Cryptography, {\bf Lecture Notes in Computer Science},  Vol.  2595 (2003),  271--290.
+
+\bibitem{Preneel} B. Preneel, \emph{Cryptographic hash functions}, {\bf European Transactions on Telecommunications}, 5(4), 431-448 (1994)
+
+\bibitem {AorS} D. M. Rodgers, \emph {Generating and Covering the Alternating or Symmetric group}, {\bf  Communications in Algebra}, 30 (2002), 425--435. 
+
+\bibitem{S} C. E. Shannon, \emph {A Mathematical Theory of Communication}, {\bf Bell System Technical Journal}, 27 (1948),  379--423. 
+
+\bibitem {SW} R. Sparr and R. Wernsdorf, \emph {Group theoretic properties of Rijndael-like ciphers}, {\bf Discrete Applied Mathematics}, Vol. 156 (2008), 3139--3149.
+
+\bibitem{BDES}{W. Trappe and L. C. Washington}, \emph{Introduction to {C}ryptography with {C}oding {T}heory}, {\bf Pearson {E}ducation}, (2006).
+
+\bibitem {We} R. Wernsdorf, \emph {The round functions of Rijndael generate the alternating group}, FSE 2002 Proceedings of the $9^{th}$ International Workshop on Fast Software Encryption,  {\bf Lecture Notes in Computer Science}, Vol. 2365, Springer-Verlag (2002), 143--148.
+
+\bibitem {AW} A. Williamson, \emph {On Primitive Permutation Groups Containing a Cycle}, {\bf Mathematische Zeitschrift}, Vol. 130 (1973), 159--162.
+
+\end{thebibliography}
+
+
+
+\end{document}
+
+
+%sagemathcloud={"zoom_width":100}
