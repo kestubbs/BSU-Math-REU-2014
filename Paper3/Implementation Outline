@@ -1,0 +1,22 @@
+
+Introduction
+
+Background
+-Finite fields (construction and implementation)
+-Core AES functions (MixColumns, SubBytes, ShiftRows)
+
+Presentation of Lane
+-Message Expansion
+-Internal cipher
+-XORing of different parts
+
+Implementation of AES Cipher in GF(9)
+--The goals of this section is to show that the conditions derived in the AES cipher paper are relevant to actual implementation--
+-Show orbits of p' for mixing matrix with zeros, mixing matrix without zero, and not mixing matrix
+-Show orbits of p' for subbytes with fixed points and (0xff - x) fixed points
+-Show orbits of p' for ShiftRows where it doesn't go to every column but gcd is 1 and normal AES
+-Show orbits of entire cipher for surjective key schedule (LSFR), with non-surjective but generates key space, and neither
+
+Implementation of Lane in GF(9)
+-Test orbits of our sufficent conditions vs more standard conditions
+-Vary round leth to see if and when we get comparable orbit lengths
